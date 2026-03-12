@@ -53,12 +53,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return token;
     },
     session({ session, token }) {
-      session.user.id = token.id;
-      session.user.username = token.username;
-      session.user.clubId = token.clubId;
-      session.user.clubLogo = token.clubLogo;
-      session.user.clubShortName = token.clubShortName;
-      session.user.isAdmin = token.isAdmin;
+      session.user.id = token.id as string;
+      session.user.username = token.username as string;
+      session.user.clubId = token.clubId as number;
+      session.user.clubLogo = token.clubLogo as string;
+      session.user.clubShortName = token.clubShortName as string;
+      session.user.isAdmin = token.isAdmin as boolean;
       return session;
     },
   },
