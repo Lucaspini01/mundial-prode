@@ -8,7 +8,9 @@ async function requireAdmin() {
   return session;
 }
 
-// PATCH /api/admin/fechas/[id] — toggle isActive (per tira)
+// PATCH /api/admin/fechas/[id]
+// Body { isActive } → toggle active (per tira)
+// Body { number, season, tira, deadline } → edit fecha fields
 export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -18,19 +20,29 @@ export async function PATCH(
 
   const { id } = await params;
   const fechaId = parseInt(id);
-  const { isActive } = await req.json();
+  const body = await req.json();
 
-  if (isActive) {
-    const fecha = await prisma.fecha.findUnique({ where: { id: fechaId }, select: { tira: true } });
-    if (!fecha) return NextResponse.json({ error: "Not found" }, { status: 404 });
-
-    // Deactivate all fechas of the same tira, then activate this one
-    await prisma.$transaction([
-      prisma.fecha.updateMany({ where: { tira: fecha.tira }, data: { isActive: false } }),
-      prisma.fecha.update({ where: { id: fechaId }, data: { isActive: true } }),
-    ]);
+  if ("isActive" in body) {
+    const { isActive } = body;
+    if (isActive) {
+      const fecha = await prisma.fecha.findUnique({ where: { id: fechaId }, select: { tira: true } });
+      if (!fecha) return NextResponse.json({ error: "Not found" }, { status: 404 });
+      await prisma.$transaction([
+        prisma.fecha.updateMany({ where: { tira: fecha.tira }, data: { isActive: false } }),
+        prisma.fecha.update({ where: { id: fechaId }, data: { isActive: true } }),
+      ]);
+    } else {
+      await prisma.fecha.update({ where: { id: fechaId }, data: { isActive: false } });
+    }
   } else {
-    await prisma.fecha.update({ where: { id: fechaId }, data: { isActive: false } });
+    const { number, season, tira, deadline } = body;
+    if (!number || !season || !tira) {
+      return NextResponse.json({ error: "Faltan datos." }, { status: 400 });
+    }
+    await prisma.fecha.update({
+      where: { id: fechaId },
+      data: { number, season, tira, deadline: deadline ? new Date(deadline) : null },
+    });
   }
 
   return NextResponse.json({ ok: true });

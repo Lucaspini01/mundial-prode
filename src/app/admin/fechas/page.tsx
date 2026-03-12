@@ -12,6 +12,14 @@ function toAR(utc: string): string {
   return new Date(utc).toLocaleString("es-AR", { timeZone: "America/Buenos_Aires", hour12: false });
 }
 
+// Parse a UTC ISO string back to Argentina date/time inputs
+function utcToARInputs(utc: string): { date: string; time: string } {
+  const d = new Date(new Date(utc).getTime() - 3 * 60 * 60 * 1000);
+  const date = d.toISOString().slice(0, 10);
+  const time = d.toISOString().slice(11, 16);
+  return { date, time };
+}
+
 const TIRAS = ["PRIMERA", "INTERMEDIA", "PRE_A", "PRE_B", "PRE_C", "PRE_D"] as const;
 type TiraKey = (typeof TIRAS)[number];
 
@@ -45,7 +53,20 @@ export default function FechasPage() {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  // Duplicate state: fechaId → set of selected target tiras
+
+  // Edit state
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editForm, setEditForm] = useState({
+    number: "",
+    season: "",
+    tira: "PRIMERA" as TiraKey,
+    deadlineDate: "",
+    deadlineTime: "",
+  });
+  const [editLoading, setEditLoading] = useState(false);
+  const [editError, setEditError] = useState("");
+
+  // Duplicate state
   const [duplicating, setDuplicating] = useState<number | null>(null);
   const [dupTiras, setDupTiras] = useState<Set<TiraKey>>(new Set());
   const [dupLoading, setDupLoading] = useState(false);
@@ -88,6 +109,48 @@ export default function FechasPage() {
     }
   }
 
+  function openEdit(f: Fecha) {
+    const dl = f.deadline ? utcToARInputs(f.deadline) : { date: "", time: "" };
+    setEditingId(f.id);
+    setEditForm({
+      number: String(f.number),
+      season: String(f.season),
+      tira: f.tira,
+      deadlineDate: dl.date,
+      deadlineTime: dl.time,
+    });
+    setEditError("");
+    setDuplicating(null);
+  }
+
+  async function handleEdit(fechaId: number) {
+    setEditError("");
+    setEditLoading(true);
+
+    const res = await fetch(`/api/admin/fechas/${fechaId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        number: parseInt(editForm.number),
+        season: parseInt(editForm.season),
+        tira: editForm.tira,
+        deadline: editForm.deadlineDate
+          ? toUTC(editForm.deadlineDate, editForm.deadlineTime || "23:59")
+          : null,
+      }),
+    });
+
+    setEditLoading(false);
+
+    if (!res.ok) {
+      const d = await res.json();
+      setEditError(d.error || "Error al guardar.");
+    } else {
+      setEditingId(null);
+      load();
+    }
+  }
+
   async function handleToggle(id: number, activate: boolean) {
     await fetch(`/api/admin/fechas/${id}`, {
       method: "PATCH",
@@ -107,6 +170,7 @@ export default function FechasPage() {
     setDuplicating(f.id);
     setDupTiras(new Set());
     setDupMsg("");
+    setEditingId(null);
   }
 
   function toggleDupTira(tira: TiraKey) {
@@ -143,7 +207,6 @@ export default function FechasPage() {
     }
   }
 
-  // Group fechas by tira in desired order
   const grouped = TIRAS.map((tira) => ({
     tira,
     items: fechas.filter((f) => f.tira === tira).sort((a, b) => a.number - b.number),
@@ -241,6 +304,7 @@ export default function FechasPage() {
                 <div className="space-y-2">
                   {items.map((f) => (
                     <div key={f.id}>
+                      {/* Fila principal */}
                       <div
                         className={`flex items-center justify-between p-3 rounded-lg border ${
                           f.isActive ? "border-green-500 bg-green-50" : "border-gray-200"
@@ -261,6 +325,16 @@ export default function FechasPage() {
                           </p>
                         </div>
                         <div className="flex gap-1.5 flex-wrap justify-end">
+                          <button
+                            onClick={() => editingId === f.id ? setEditingId(null) : openEdit(f)}
+                            className={`text-xs py-1 px-2.5 rounded-lg border transition-colors ${
+                              editingId === f.id
+                                ? "border-yellow-400 bg-yellow-50 text-yellow-700"
+                                : "border-gray-300 text-gray-600 hover:bg-gray-100"
+                            }`}
+                          >
+                            Editar
+                          </button>
                           <button
                             onClick={() => duplicating === f.id ? setDuplicating(null) : openDuplicate(f)}
                             className="text-xs py-1 px-2.5 rounded-lg border border-blue-300 text-blue-600 hover:bg-blue-50 transition-colors"
@@ -290,6 +364,82 @@ export default function FechasPage() {
                           </button>
                         </div>
                       </div>
+
+                      {/* Panel de edición */}
+                      {editingId === f.id && (
+                        <div className="mt-1 p-3 bg-yellow-50 border border-yellow-200 rounded-lg space-y-3">
+                          <p className="text-xs font-semibold text-yellow-700">Editar fecha</p>
+                          <div className="grid grid-cols-2 gap-2">
+                            <div>
+                              <label className="text-xs text-gray-500 mb-0.5 block">Número</label>
+                              <input
+                                className="input text-sm py-1"
+                                type="number"
+                                min="1"
+                                value={editForm.number}
+                                onChange={(e) => setEditForm({ ...editForm, number: e.target.value })}
+                              />
+                            </div>
+                            <div>
+                              <label className="text-xs text-gray-500 mb-0.5 block">Temporada</label>
+                              <input
+                                className="input text-sm py-1"
+                                type="number"
+                                value={editForm.season}
+                                onChange={(e) => setEditForm({ ...editForm, season: e.target.value })}
+                              />
+                            </div>
+                          </div>
+                          <div>
+                            <label className="text-xs text-gray-500 mb-0.5 block">Tira</label>
+                            <select
+                              className="input text-sm py-1"
+                              value={editForm.tira}
+                              onChange={(e) => setEditForm({ ...editForm, tira: e.target.value as TiraKey })}
+                            >
+                              {TIRAS.map((t) => (
+                                <option key={t} value={t}>{TIRA_LABELS[t]}</option>
+                              ))}
+                            </select>
+                          </div>
+                          <div className="grid grid-cols-2 gap-2">
+                            <div>
+                              <label className="text-xs text-gray-500 mb-0.5 block">Fecha cierre</label>
+                              <input
+                                className="input text-sm py-1"
+                                type="date"
+                                value={editForm.deadlineDate}
+                                onChange={(e) => setEditForm({ ...editForm, deadlineDate: e.target.value })}
+                              />
+                            </div>
+                            <div>
+                              <label className="text-xs text-gray-500 mb-0.5 block">Hora cierre</label>
+                              <input
+                                className="input text-sm py-1"
+                                type="time"
+                                value={editForm.deadlineTime}
+                                onChange={(e) => setEditForm({ ...editForm, deadlineTime: e.target.value })}
+                              />
+                            </div>
+                          </div>
+                          {editError && <p className="text-red-600 text-xs">{editError}</p>}
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => handleEdit(f.id)}
+                              disabled={editLoading}
+                              className="btn-primary text-xs py-1 px-3"
+                            >
+                              {editLoading ? "Guardando..." : "Guardar"}
+                            </button>
+                            <button
+                              onClick={() => setEditingId(null)}
+                              className="btn-secondary text-xs py-1 px-3"
+                            >
+                              Cancelar
+                            </button>
+                          </div>
+                        </div>
+                      )}
 
                       {/* Panel de duplicar */}
                       {duplicating === f.id && (
