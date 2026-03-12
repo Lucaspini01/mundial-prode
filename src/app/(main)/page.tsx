@@ -60,7 +60,7 @@ export default async function HomePage() {
           >
             {deadlinePassed
               ? "⏰ Predicciones cerradas"
-              : `⏳ Cierra: ${new Date(fecha.deadline).toLocaleString("es-AR", { timeZone: "America/Buenos_Aires" })}`}
+              : `⏳ Cierra: ${new Date(fecha.deadline).toLocaleString("es-AR", { timeZone: "America/Buenos_Aires", hour12: false })}`}
           </span>
         )}
       </div>

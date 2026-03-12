@@ -11,7 +11,7 @@ function toUTC(date: string, time: string): string {
 
 // Display a UTC date string as Argentina local time
 function toAR(utc: string): string {
-  return new Date(utc).toLocaleString("es-AR", { timeZone: "America/Buenos_Aires" });
+  return new Date(utc).toLocaleString("es-AR", { timeZone: "America/Buenos_Aires", hour12: false });
 }
 
 type Fecha = {
