@@ -13,7 +13,7 @@ type Fecha = {
 
 export default function FechasPage() {
   const [fechas, setFechas] = useState<Fecha[]>([]);
-  const [form, setForm] = useState({ number: "", season: "2026", deadline: "" });
+  const [form, setForm] = useState({ number: "", season: "2026", deadlineDate: "", deadlineTime: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -38,7 +38,9 @@ export default function FechasPage() {
       body: JSON.stringify({
         number: parseInt(form.number),
         season: parseInt(form.season),
-        deadline: form.deadline || null,
+        deadline: form.deadlineDate
+          ? `${form.deadlineDate}T${form.deadlineTime || "23:59"}`
+          : null,
       }),
     });
 
@@ -48,7 +50,7 @@ export default function FechasPage() {
       const d = await res.json();
       setError(d.error || "Error al crear fecha.");
     } else {
-      setForm({ number: "", season: "2026", deadline: "" });
+      setForm({ number: "", season: "2026", deadlineDate: "", deadlineTime: "" });
       load();
     }
   }
@@ -106,13 +108,24 @@ export default function FechasPage() {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Deadline (opcional)
+                Fecha de cierre (opcional)
               </label>
               <input
                 className="input"
-                type="datetime-local"
-                value={form.deadline}
-                onChange={(e) => setForm({ ...form, deadline: e.target.value })}
+                type="date"
+                value={form.deadlineDate}
+                onChange={(e) => setForm({ ...form, deadlineDate: e.target.value })}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Hora de cierre <span className="text-gray-400">(por defecto 23:59)</span>
+              </label>
+              <input
+                className="input"
+                type="time"
+                value={form.deadlineTime}
+                onChange={(e) => setForm({ ...form, deadlineTime: e.target.value })}
               />
             </div>
             {error && (
