@@ -8,10 +8,12 @@ export default function FechaFilter({
   fechas,
   selected,
   clubId,
+  tira,
 }: {
   fechas: Fecha[];
   selected: number | null;
   clubId: number | null;
+  tira: string;
 }) {
   const router = useRouter();
 
@@ -23,10 +25,10 @@ export default function FechaFilter({
         value={selected ?? ""}
         onChange={(e) => {
           const params = new URLSearchParams();
+          params.set("tira", tira);
           if (e.target.value) params.set("fecha", e.target.value);
           if (clubId) params.set("club", String(clubId));
-          const qs = params.toString();
-          router.push(qs ? `/ranking?${qs}` : "/ranking");
+          router.push(`/ranking?${params.toString()}`);
         }}
       >
         <option value="">Todas</option>
