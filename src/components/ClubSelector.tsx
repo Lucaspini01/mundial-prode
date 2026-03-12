@@ -1,7 +1,6 @@
 "use client";
 
-import Image from "next/image";
-import { useState } from "react";
+import ClubImage from "./ClubImage";
 
 type Club = { id: number; name: string; shortName: string; logoPath: string };
 
@@ -10,32 +9,6 @@ type Props = {
   selected: number;
   onSelect: (id: number) => void;
 };
-
-function ClubLogo({ club, size }: { club: Club; size: number }) {
-  const [error, setError] = useState(false);
-
-  if (error) {
-    return (
-      <div
-        className="flex items-center justify-center rounded-full bg-green-800 text-white font-bold"
-        style={{ width: size, height: size, fontSize: size * 0.28 }}
-      >
-        {club.shortName.slice(0, 3)}
-      </div>
-    );
-  }
-
-  return (
-    <Image
-      src={club.logoPath}
-      alt={club.name}
-      width={size}
-      height={size}
-      className="object-contain rounded-full"
-      onError={() => setError(true)}
-    />
-  );
-}
 
 export default function ClubSelector({ clubs, selected, onSelect }: Props) {
   return (
@@ -52,7 +25,7 @@ export default function ClubSelector({ clubs, selected, onSelect }: Props) {
               : "border-gray-200 hover:border-gray-400"
           }`}
         >
-          <ClubLogo club={club} size={44} />
+          <ClubImage logoPath={club.logoPath} shortName={club.shortName} size={44} />
           <span className="text-xs text-center mt-1 leading-tight text-gray-600 font-medium">
             {club.shortName}
           </span>

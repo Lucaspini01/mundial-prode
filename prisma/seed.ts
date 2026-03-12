@@ -18,6 +18,7 @@ const clubs = [
   { name: "Universitario de la Plata", shortName: "UDLP", logoPath: "/clubs/universitario-lp.svg" },
   { name: "San Andres", shortName: "SAN", logoPath: "/clubs/san-andres.svg" },
   { name: "Pucara", shortName: "PUC", logoPath: "/clubs/pucara.svg" },
+  { name: "Algun Otro", shortName: "OTRO", logoPath: "/clubs/otros.svg" },
 ];
 
 async function main() {

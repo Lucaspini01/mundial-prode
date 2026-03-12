@@ -18,7 +18,7 @@ export default async function RankingPage({
 
   const [fechas, clubs] = await Promise.all([
     prisma.fecha.findMany({ orderBy: [{ season: "desc" }, { number: "asc" }] }),
-    prisma.club.findMany({ orderBy: { name: "asc" } }),
+    prisma.club.findMany({ where: { shortName: { not: "OTRO" } }, orderBy: { name: "asc" } }),
   ]);
 
   const users = await prisma.user.findMany({
