@@ -39,7 +39,7 @@ export default function FechasPage() {
         number: parseInt(form.number),
         season: parseInt(form.season),
         deadline: form.deadlineDate
-          ? `${form.deadlineDate}T${form.deadlineTime || "23:59"}`
+          ? `${form.deadlineDate}T${form.deadlineTime || "23:59"}:00-03:00`
           : null,
       }),
     });
