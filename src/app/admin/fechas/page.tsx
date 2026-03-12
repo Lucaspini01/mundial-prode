@@ -2,6 +2,18 @@
 
 import { useState, useEffect } from "react";
 
+// Convert Argentina local date+time to UTC ISO string (Argentina = UTC-3, no DST)
+function toUTC(date: string, time: string): string {
+  const [year, month, day] = date.split("-").map(Number);
+  const [hours, minutes] = time.split(":").map(Number);
+  return new Date(Date.UTC(year, month - 1, day, hours + 3, minutes)).toISOString();
+}
+
+// Display a UTC date string as Argentina local time
+function toAR(utc: string): string {
+  return new Date(utc).toLocaleString("es-AR", { timeZone: "America/Buenos_Aires" });
+}
+
 type Fecha = {
   id: number;
   number: number;
@@ -39,7 +51,7 @@ export default function FechasPage() {
         number: parseInt(form.number),
         season: parseInt(form.season),
         deadline: form.deadlineDate
-          ? `${form.deadlineDate}T${form.deadlineTime || "23:59"}:00-03:00`
+          ? toUTC(form.deadlineDate, form.deadlineTime || "23:59")
           : null,
       }),
     });
@@ -164,9 +176,7 @@ export default function FechasPage() {
                   </p>
                   <p className="text-xs text-gray-500">
                     {f._count.matches} partidos ·{" "}
-                    {f.deadline
-                      ? `Cierra ${new Date(f.deadline).toLocaleString("es-AR")}`
-                      : "Sin deadline"}
+                    {f.deadline ? `Cierra ${toAR(f.deadline)}` : "Sin deadline"}
                   </p>
                 </div>
                 <div className="flex gap-2">
