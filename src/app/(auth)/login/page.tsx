@@ -30,19 +30,24 @@ export default function LoginPage() {
     setError("");
     setLoading(true);
 
-    const res = await signIn("credentials", {
-      username: form.username,
-      password: form.password,
-      redirect: false,
-    });
+    try {
+      const res = await signIn("credentials", {
+        username: form.username,
+        password: form.password,
+        redirect: false,
+      });
 
-    setLoading(false);
+      setLoading(false);
 
-    if (res?.error) {
+      if (!res || (res as any).error) {
+        setError("Usuario o contraseña incorrectos.");
+      } else {
+        router.push("/");
+        router.refresh();
+      }
+    } catch {
+      setLoading(false);
       setError("Usuario o contraseña incorrectos.");
-    } else {
-      router.push("/");
-      router.refresh();
     }
   }
 
