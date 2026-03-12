@@ -13,11 +13,7 @@ type Fecha = {
 
 export default function FechasPage() {
   const [fechas, setFechas] = useState<Fecha[]>([]);
-  const [form, setForm] = useState({
-    number: "",
-    season: "2026",
-    deadline: "",
-  });
+  const [form, setForm] = useState({ number: "", season: "2026", deadline: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -57,8 +53,18 @@ export default function FechasPage() {
     }
   }
 
-  async function handleActivate(id: number) {
-    await fetch(`/api/admin/fechas/${id}/activate`, { method: "POST" });
+  async function handleToggle(id: number, activate: boolean) {
+    await fetch(`/api/admin/fechas/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ isActive: activate }),
+    });
+    load();
+  }
+
+  async function handleDelete(id: number, number: number) {
+    if (!confirm(`¿Borrar Fecha ${number}? Se eliminarán todos sus partidos y predicciones.`)) return;
+    await fetch(`/api/admin/fechas/${id}`, { method: "DELETE" });
     load();
   }
 
@@ -131,9 +137,7 @@ export default function FechasPage() {
               <div
                 key={f.id}
                 className={`flex items-center justify-between p-3 rounded-lg border ${
-                  f.isActive
-                    ? "border-green-500 bg-green-50"
-                    : "border-gray-200"
+                  f.isActive ? "border-green-500 bg-green-50" : "border-gray-200"
                 }`}
               >
                 <div>
@@ -152,14 +156,29 @@ export default function FechasPage() {
                       : "Sin deadline"}
                   </p>
                 </div>
-                {!f.isActive && (
+                <div className="flex gap-2">
+                  {f.isActive ? (
+                    <button
+                      onClick={() => handleToggle(f.id, false)}
+                      className="btn-secondary text-xs py-1 px-3"
+                    >
+                      Desactivar
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => handleToggle(f.id, true)}
+                      className="btn-secondary text-xs py-1 px-3"
+                    >
+                      Activar
+                    </button>
+                  )}
                   <button
-                    onClick={() => handleActivate(f.id)}
-                    className="btn-secondary text-xs py-1 px-3"
+                    onClick={() => handleDelete(f.id, f.number)}
+                    className="text-xs py-1 px-3 rounded-lg border border-red-300 text-red-600 hover:bg-red-50 transition-colors"
                   >
-                    Activar
+                    Borrar
                   </button>
-                )}
+                </div>
               </div>
             ))}
           </div>
