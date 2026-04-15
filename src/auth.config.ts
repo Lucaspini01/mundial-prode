@@ -14,9 +14,11 @@ export const authConfig: NextAuthConfig = {
       const isPublic =
         pathname.startsWith("/login") ||
         pathname.startsWith("/register") ||
+        pathname.startsWith("/forgot-password") ||
+        pathname.startsWith("/reset-password") ||
         pathname.startsWith("/api/auth") ||
         pathname.startsWith("/api/register") ||
-        pathname.startsWith("/api/clubs");
+        pathname.startsWith("/api/teams");
 
       if (isPublic) return true;
       if (isLoggedIn) return true;

@@ -4,33 +4,20 @@ import { useState, useEffect } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import ClubImage from "@/components/ClubImage";
+import TeamSelector from "@/components/TeamSelector";
 
-type Club = { id: number; name: string; shortName: string; logoPath: string };
-
-function RugbyBallIcon() {
-  return (
-    <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-9 h-9">
-      <ellipse cx="32" cy="32" rx="20" ry="12" transform="rotate(-35 32 32)"
-        fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.9)" strokeWidth="2"/>
-      <line x1="20" y1="20" x2="44" y2="44" stroke="rgba(255,255,255,0.7)" strokeWidth="1.5" strokeLinecap="round"/>
-      <line x1="25" y1="17" x2="27" y2="24" stroke="rgba(255,255,255,0.7)" strokeWidth="1.2" strokeLinecap="round"/>
-      <line x1="37" y1="40" x2="39" y2="47" stroke="rgba(255,255,255,0.7)" strokeWidth="1.2" strokeLinecap="round"/>
-      <line x1="40" y1="25" x2="47" y2="27" stroke="rgba(255,255,255,0.7)" strokeWidth="1.2" strokeLinecap="round"/>
-      <line x1="17" y1="37" x2="24" y2="39" stroke="rgba(255,255,255,0.7)" strokeWidth="1.2" strokeLinecap="round"/>
-    </svg>
-  );
-}
+type Team = { id: number; name: string; shortName: string; flagCode: string | null };
 
 export default function RegisterPage() {
   const router = useRouter();
-  const [clubs, setClubs] = useState<Club[]>([]);
-  const [form, setForm] = useState({ username: "", password: "", confirmPassword: "", clubId: 0 });
+  const [teams, setTeams] = useState<Team[]>([]);
+  const [form, setForm] = useState({ email: "", username: "", password: "", confirmPassword: "" });
+  const [favoriteTeamId, setFavoriteTeamId] = useState<number | null>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetch("/api/clubs").then((r) => r.json()).then(setClubs);
+    fetch("/api/teams").then((r) => r.json()).then(setTeams);
   }, []);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -41,17 +28,18 @@ export default function RegisterPage() {
       setError("Las contraseñas no coinciden.");
       return;
     }
-    if (form.clubId === 0) {
-      setError("Seleccioná tu club.");
-      return;
-    }
 
     setLoading(true);
 
     const res = await fetch("/api/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username: form.username, password: form.password, clubId: form.clubId }),
+      body: JSON.stringify({
+        email: form.email,
+        username: form.username,
+        password: form.password,
+        favoriteTeamId,
+      }),
     });
 
     const data = await res.json();
@@ -63,7 +51,7 @@ export default function RegisterPage() {
     }
 
     await signIn("credentials", {
-      username: form.username,
+      email: form.email,
       password: form.password,
       redirect: false,
     });
@@ -74,7 +62,7 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-8"
-      style={{ background: "linear-gradient(135deg, #064e25 0%, #006633 50%, #004d26 100%)" }}>
+      style={{ background: "linear-gradient(135deg, #0c2461 0%, #1e3799 50%, #0a3d62 100%)" }}>
 
       <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-5">
         {[...Array(8)].map((_, i) => (
@@ -86,30 +74,45 @@ export default function RegisterPage() {
         <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 p-8">
 
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-green-800 rounded-2xl mb-4 shadow-lg">
-              <RugbyBallIcon />
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-800 rounded-2xl mb-4 shadow-lg text-3xl">
+              ⚽
             </div>
             <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Crear cuenta</h1>
-            <p className="text-green-700 text-sm font-semibold mt-0.5">Prode URBA · Primera A 2026</p>
+            <p className="text-blue-700 text-sm font-semibold mt-0.5">Mundial Prode · 2026</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
 
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <span className="flex items-center justify-center w-5 h-5 rounded-full bg-green-800 text-white text-xs font-black">1</span>
+                <span className="flex items-center justify-center w-5 h-5 rounded-full bg-blue-800 text-white text-xs font-black">1</span>
                 <h2 className="text-xs font-bold text-slate-500 uppercase tracking-widest">Tus datos</h2>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1.5">Usuario</label>
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-semibold text-slate-700 mb-1.5">Email</label>
+                  <input
+                    className="input"
+                    type="email"
+                    placeholder="tu@email.com"
+                    value={form.email}
+                    onChange={(e) => setForm({ ...form, email: e.target.value })}
+                    required
+                    autoFocus
+                    autoComplete="email"
+                  />
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+                    Nombre de usuario <span className="font-normal text-slate-400">(se muestra en el ranking)</span>
+                  </label>
                   <input
                     className="input"
                     type="text"
                     placeholder="min. 3 caracteres"
                     value={form.username}
                     onChange={(e) => setForm({ ...form, username: e.target.value })}
-                    required minLength={3} maxLength={20} autoFocus
+                    required minLength={3} maxLength={20}
                   />
                 </div>
                 <div>
@@ -121,9 +124,10 @@ export default function RegisterPage() {
                     value={form.password}
                     onChange={(e) => setForm({ ...form, password: e.target.value })}
                     required minLength={6}
+                    autoComplete="new-password"
                   />
                 </div>
-                <div className="md:col-span-2">
+                <div>
                   <label className="block text-sm font-semibold text-slate-700 mb-1.5">Confirmar contraseña</label>
                   <input
                     className="input"
@@ -132,6 +136,7 @@ export default function RegisterPage() {
                     value={form.confirmPassword}
                     onChange={(e) => setForm({ ...form, confirmPassword: e.target.value })}
                     required
+                    autoComplete="new-password"
                   />
                 </div>
               </div>
@@ -139,28 +144,12 @@ export default function RegisterPage() {
 
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <span className="flex items-center justify-center w-5 h-5 rounded-full bg-green-800 text-white text-xs font-black">2</span>
-                <h2 className="text-xs font-bold text-slate-500 uppercase tracking-widest">Elegí tu club</h2>
+                <span className="flex items-center justify-center w-5 h-5 rounded-full bg-blue-800 text-white text-xs font-black">2</span>
+                <h2 className="text-xs font-bold text-slate-500 uppercase tracking-widest">
+                  Equipo favorito <span className="normal-case font-normal text-slate-400">(opcional)</span>
+                </h2>
               </div>
-              <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-7 gap-2">
-                {clubs.map((club) => (
-                  <button
-                    key={club.id}
-                    type="button"
-                    onClick={() => setForm({ ...form, clubId: club.id })}
-                    className={`flex flex-col items-center p-2 rounded-2xl border-2 transition-all duration-150 ${
-                      form.clubId === club.id
-                        ? "border-green-700 bg-green-50 shadow-md scale-105"
-                        : "border-slate-200 hover:border-green-300 hover:bg-green-50/50"
-                    }`}
-                  >
-                    <ClubImage logoPath={club.logoPath} shortName={club.shortName} size={44} />
-                    <span className="text-[10px] text-center mt-1 leading-tight text-slate-600 font-semibold">
-                      {club.shortName}
-                    </span>
-                  </button>
-                ))}
-              </div>
+              <TeamSelector teams={teams} selected={favoriteTeamId} onSelect={setFavoriteTeamId} />
             </div>
 
             {error && (
@@ -177,7 +166,7 @@ export default function RegisterPage() {
 
           <p className="text-center text-sm text-slate-500 mt-6">
             ¿Ya tenés cuenta?{" "}
-            <Link href="/login" className="text-green-700 font-bold hover:underline">Ingresá</Link>
+            <Link href="/login" className="text-blue-700 font-bold hover:underline">Ingresá</Link>
           </p>
         </div>
       </div>

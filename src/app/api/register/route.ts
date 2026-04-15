@@ -3,10 +3,15 @@ import { prisma } from "@/lib/db";
 import bcrypt from "bcryptjs";
 
 export async function POST(req: NextRequest) {
-  const { username, password, clubId } = await req.json();
+  const { email, username, password, favoriteTeamId } = await req.json();
 
-  if (!username || !password || !clubId) {
+  if (!email || !username || !password) {
     return NextResponse.json({ error: "Faltan datos." }, { status: 400 });
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return NextResponse.json({ error: "Email inválido." }, { status: 400 });
   }
 
   if (username.length < 3 || username.length > 20) {
@@ -23,23 +28,33 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const existing = await prisma.user.findUnique({ where: { username } });
-  if (existing) {
+  const existingEmail = await prisma.user.findUnique({ where: { email } });
+  if (existingEmail) {
+    return NextResponse.json(
+      { error: "Ese email ya está registrado." },
+      { status: 409 }
+    );
+  }
+
+  const existingUsername = await prisma.user.findUnique({ where: { username } });
+  if (existingUsername) {
     return NextResponse.json(
       { error: "Ese nombre de usuario ya está en uso." },
       { status: 409 }
     );
   }
 
-  const clubExists = await prisma.club.findUnique({ where: { id: clubId } });
-  if (!clubExists) {
-    return NextResponse.json({ error: "Club inválido." }, { status: 400 });
+  if (favoriteTeamId) {
+    const teamExists = await prisma.team.findUnique({ where: { id: favoriteTeamId } });
+    if (!teamExists) {
+      return NextResponse.json({ error: "Selección inválida." }, { status: 400 });
+    }
   }
 
   const hashed = await bcrypt.hash(password, 10);
 
   const user = await prisma.user.create({
-    data: { username, password: hashed, clubId },
+    data: { email, username, password: hashed, favoriteTeamId: favoriteTeamId ?? null },
   });
 
   return NextResponse.json({ id: user.id }, { status: 201 });

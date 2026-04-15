@@ -9,15 +9,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
     Credentials({
       credentials: {
-        username: { label: "Usuario", type: "text" },
+        email: { label: "Email", type: "email" },
         password: { label: "Contraseña", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials?.username || !credentials?.password) return null;
+        if (!credentials?.email || !credentials?.password) return null;
 
         const user = await prisma.user.findUnique({
-          where: { username: credentials.username as string },
-          include: { club: true },
+          where: { email: credentials.email as string },
+          include: { favoriteTeam: true },
         });
 
         if (!user) return null;
@@ -31,10 +31,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         return {
           id: String(user.id),
           name: user.username,
+          email: user.email,
           username: user.username,
-          clubId: user.clubId,
-          clubLogo: user.club.logoPath,
-          clubShortName: user.club.shortName,
+          favoriteTeamId: user.favoriteTeamId,
+          favoriteTeamFlag: user.favoriteTeam?.flagCode ?? null,
+          favoriteTeamShort: user.favoriteTeam?.shortName ?? null,
           isAdmin: user.isAdmin,
         };
       },
@@ -44,20 +45,22 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     jwt({ token, user }) {
       if (user) {
         token.id = user.id as string;
+        token.email = user.email as string;
         token.username = (user as any).username;
-        token.clubId = (user as any).clubId;
-        token.clubLogo = (user as any).clubLogo;
-        token.clubShortName = (user as any).clubShortName;
+        token.favoriteTeamId = (user as any).favoriteTeamId;
+        token.favoriteTeamFlag = (user as any).favoriteTeamFlag;
+        token.favoriteTeamShort = (user as any).favoriteTeamShort;
         token.isAdmin = (user as any).isAdmin;
       }
       return token;
     },
     session({ session, token }) {
       session.user.id = token.id as string;
+      session.user.email = token.email as string;
       session.user.username = token.username as string;
-      session.user.clubId = token.clubId as number;
-      session.user.clubLogo = token.clubLogo as string;
-      session.user.clubShortName = token.clubShortName as string;
+      session.user.favoriteTeamId = token.favoriteTeamId as number | null;
+      session.user.favoriteTeamFlag = token.favoriteTeamFlag as string | null;
+      session.user.favoriteTeamShort = token.favoriteTeamShort as string | null;
       session.user.isAdmin = token.isAdmin as boolean;
       return session;
     },
