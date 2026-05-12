@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -59,8 +60,8 @@ export default function LoginPage() {
         <div className="bg-mundial-surface/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/10 p-8">
 
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-green-600/80 border border-green-500/30 rounded-2xl mb-4 shadow-lg shadow-green-500/20 text-3xl">
-              ⚽
+            <div className="inline-flex items-center justify-center w-20 h-20 mb-4">
+              <Image src="/logo-mundial.png" alt="Mundial 2026" width={80} height={80} className="object-contain drop-shadow-lg" />
             </div>
             <h1 className="font-russo text-2xl text-white tracking-tight">Mundial Prode 2026</h1>
             <p className="text-green-400 text-sm font-semibold mt-0.5">FIFA World Cup 2026</p>

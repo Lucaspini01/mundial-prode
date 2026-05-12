@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import TeamFlag from "./TeamFlag";
@@ -33,7 +34,7 @@ export default function Navbar({ username, favoriteTeamFlag, favoriteTeamShort, 
         {/* Brand + Links */}
         <div className="flex items-center gap-6">
           <Link href="/" className="font-russo text-base tracking-tight flex items-center gap-2 text-white">
-            <span className="text-green-400 text-lg">⚽</span>
+            <Image src="/logo-mundial.png" alt="Mundial 2026" width={32} height={32} className="object-contain" />
             <span>Mundial 2026</span>
           </Link>
 
