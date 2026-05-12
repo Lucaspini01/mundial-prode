@@ -10,6 +10,7 @@
     "db:seed": "ts-node --project tsconfig.seed.json prisma/seed.ts",
     "db:seed-teams": "ts-node --project tsconfig.seed.json scripts/seed-teams.ts",
     "db:import": "ts-node --project tsconfig.seed.json scripts/import-fixtures.ts",
+    "db:seed-fixtures": "ts-node --project tsconfig.seed.json scripts/seed-fixtures.ts",
     "db:studio": "prisma studio"
   },
   "dependencies": {
