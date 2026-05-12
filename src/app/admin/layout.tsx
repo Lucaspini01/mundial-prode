@@ -18,6 +18,7 @@ export default async function AdminLayout({
     { href: "/admin/fechas", label: "Fechas" },
     { href: "/admin/partidos", label: "Partidos" },
     { href: "/admin/resultados", label: "Resultados" },
+    { href: "/admin/usuarios", label: "Usuarios" },
   ];
 
   return (

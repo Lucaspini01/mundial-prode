@@ -26,6 +26,7 @@ model User {
   favoriteTeamId      Int?
   favoriteTeam        Team?                @relation(fields: [favoriteTeamId], references: [id])
   isAdmin             Boolean              @default(false)
+  isApproved          Boolean              @default(false)
   predictions         Prediction[]
   passwordResetTokens PasswordResetToken[]
   createdAt           DateTime             @default(now())

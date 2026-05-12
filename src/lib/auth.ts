@@ -37,6 +37,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           favoriteTeamFlag: user.favoriteTeam?.flagCode ?? null,
           favoriteTeamShort: user.favoriteTeam?.shortName ?? null,
           isAdmin: user.isAdmin,
+          isApproved: user.isApproved,
         };
       },
     }),
@@ -51,6 +52,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.favoriteTeamFlag = (user as any).favoriteTeamFlag;
         token.favoriteTeamShort = (user as any).favoriteTeamShort;
         token.isAdmin = (user as any).isAdmin;
+        token.isApproved = (user as any).isApproved;
       }
       return token;
     },
@@ -62,6 +64,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       session.user.favoriteTeamFlag = token.favoriteTeamFlag as string | null;
       session.user.favoriteTeamShort = token.favoriteTeamShort as string | null;
       session.user.isAdmin = token.isAdmin as boolean;
+      session.user.isApproved = token.isApproved as boolean;
       return session;
     },
   },

@@ -1,20 +1,18 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import TeamSelector from "@/components/TeamSelector";
 
 type Team = { id: number; name: string; shortName: string; flagCode: string | null };
 
 export default function RegisterPage() {
-  const router = useRouter();
   const [teams, setTeams] = useState<Team[]>([]);
   const [form, setForm] = useState({ email: "", username: "", password: "", confirmPassword: "" });
   const [favoriteTeamId, setFavoriteTeamId] = useState<number | null>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [registered, setRegistered] = useState(false);
 
   useEffect(() => {
     fetch("/api/teams").then((r) => r.json()).then(setTeams);
@@ -50,14 +48,45 @@ export default function RegisterPage() {
       return;
     }
 
-    await signIn("credentials", {
-      email: form.email,
-      password: form.password,
-      redirect: false,
-    });
+    setLoading(false);
+    setRegistered(true);
+  }
 
-    router.push("/");
-    router.refresh();
+  if (registered) {
+    return (
+      <div
+        className="min-h-screen flex items-center justify-center px-4"
+        style={{
+          background:
+            "radial-gradient(ellipse at 50% 0%, rgba(34,197,94,0.08) 0%, transparent 60%), linear-gradient(180deg, #060D1A 0%, #0B1628 100%)",
+        }}
+      >
+        <div className="w-full max-w-sm text-center">
+          <div className="bg-mundial-surface/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/10 p-8">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-green-500/20 border border-green-500/30 rounded-2xl mb-5 text-3xl">
+              ✅
+            </div>
+            <h1 className="font-russo text-xl text-white tracking-tight mb-2">
+              ¡Cuenta creada!
+            </h1>
+            <p className="text-green-400 text-sm font-semibold mb-4">
+              Registro exitoso
+            </p>
+            <p className="text-slate-400 text-sm leading-relaxed mb-6">
+              Tu cuenta fue registrada. Un administrador revisará tu solicitud y
+              habilitará tu acceso una vez confirmado el pago de la entrada al
+              prode.
+            </p>
+            <Link
+              href="/login"
+              className="btn-primary block w-full py-2.5 text-sm text-center"
+            >
+              Ir al inicio de sesión
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (

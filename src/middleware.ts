@@ -7,6 +7,9 @@ export function middleware(request: NextRequest) {
   const isPublic =
     pathname.startsWith("/login") ||
     pathname.startsWith("/register") ||
+    pathname.startsWith("/forgot-password") ||
+    pathname.startsWith("/reset-password") ||
+    pathname.startsWith("/pending") ||
     pathname.startsWith("/api/auth") ||
     pathname.startsWith("/api/register") ||
     pathname.startsWith("/api/teams");

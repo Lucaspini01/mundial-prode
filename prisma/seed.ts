@@ -79,21 +79,34 @@ async function main() {
     await prisma.team.create({ data: team });
   }
 
-  console.log("Creating admin user...");
+  console.log("Creating admin users...");
   const adminPassword = await bcrypt.hash("admin123", 10);
+  const lucasPassword = await bcrypt.hash("lucas2026", 10);
 
-  await prisma.user.create({
-    data: {
-      email: "admin@mundial-prode.com",
-      username: "admin",
-      password: adminPassword,
-      favoriteTeamId: null,
-      isAdmin: true,
-    },
+  await prisma.user.createMany({
+    data: [
+      {
+        email: "admin@mundial-prode.com",
+        username: "admin",
+        password: adminPassword,
+        favoriteTeamId: null,
+        isAdmin: true,
+        isApproved: true,
+      },
+      {
+        email: "lucas@prode.com",
+        username: "Lucas",
+        password: lucasPassword,
+        favoriteTeamId: null,
+        isAdmin: true,
+        isApproved: true,
+      },
+    ],
   });
 
   console.log("\n✓ Seed completado.");
-  console.log("  Admin: admin / admin123");
+  console.log("  Admin 1: admin@mundial-prode.com / admin123");
+  console.log("  Admin 2: lucas@prode.com / lucas2026");
   console.log(`  Equipos cargados: ${teams.length}`);
 }
 

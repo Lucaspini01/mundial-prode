@@ -10,6 +10,7 @@ declare module "next-auth" {
       favoriteTeamFlag: string | null;
       favoriteTeamShort: string | null;
       isAdmin: boolean;
+      isApproved: boolean;
     };
   }
 }
@@ -23,5 +24,6 @@ declare module "next-auth/jwt" {
     favoriteTeamFlag: string | null;
     favoriteTeamShort: string | null;
     isAdmin: boolean;
+    isApproved: boolean;
   }
 }

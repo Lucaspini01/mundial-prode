@@ -16,6 +16,7 @@ export const authConfig: NextAuthConfig = {
         pathname.startsWith("/register") ||
         pathname.startsWith("/forgot-password") ||
         pathname.startsWith("/reset-password") ||
+        pathname.startsWith("/pending") ||
         pathname.startsWith("/api/auth") ||
         pathname.startsWith("/api/register") ||
         pathname.startsWith("/api/teams");

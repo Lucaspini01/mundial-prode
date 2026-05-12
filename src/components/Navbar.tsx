@@ -18,6 +18,7 @@ export default function Navbar({ username, favoriteTeamFlag, favoriteTeamShort, 
   const links = [
     { href: "/", label: "Predicciones" },
     { href: "/ranking", label: "Ranking" },
+    { href: "/ganadores", label: "Ganadores" },
     { href: "/historial", label: "Historial" },
     { href: "/selecciones", label: "Selecciones" },
   ];

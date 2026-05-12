@@ -13,6 +13,10 @@ export default async function MainLayout({
     redirect("/login");
   }
 
+  if (!session.user.isApproved && !session.user.isAdmin) {
+    redirect("/pending");
+  }
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar
