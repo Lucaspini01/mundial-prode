@@ -10,7 +10,7 @@ const russoOne = Russo_One({
 });
 
 export const metadata: Metadata = {
-  title: "Mundial Prode 2026",
+  title: "Prode Curupa Mundial 2026",
   description: "Predicciones del Mundial de Fútbol 2026",
 };
 

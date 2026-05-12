@@ -107,7 +107,7 @@ export default function RegisterPage() {
               ⚽
             </div>
             <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Crear cuenta</h1>
-            <p className="text-blue-700 text-sm font-semibold mt-0.5">Mundial Prode · 2026</p>
+            <p className="text-blue-700 text-sm font-semibold mt-0.5">Prode Curupa · 2026</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">

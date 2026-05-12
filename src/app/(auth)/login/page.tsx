@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -60,10 +59,11 @@ export default function LoginPage() {
         <div className="bg-mundial-surface/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/10 p-8">
 
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-20 h-20 mb-4">
-              <Image src="/logo-mundial.png" alt="Mundial 2026" width={80} height={80} className="object-contain drop-shadow-lg" />
+            <div className="flex items-center justify-center mb-4">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/logo-mundial.png" alt="Prode Curupa Mundial 2026" style={{ width: 80, height: 80, objectFit: "contain" }} />
             </div>
-            <h1 className="font-russo text-2xl text-white tracking-tight">Mundial Prode 2026</h1>
+            <h1 className="font-russo text-2xl text-white tracking-tight">Prode Curupa Mundial 2026</h1>
             <p className="text-green-400 text-sm font-semibold mt-0.5">FIFA World Cup 2026</p>
             <p className="text-slate-500 text-sm mt-2">Ingresá para hacer tus predicciones</p>
           </div>
