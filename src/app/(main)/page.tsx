@@ -99,7 +99,7 @@ export default async function HomePage({
                         : "bg-white/[0.07] border-white/15 text-slate-300 hover:bg-white/10 hover:text-white"
                     }`}
                   >
-                    Jornada {f.number}
+                    Fecha {f.number}
                     {isPast && !isSelected && (
                       <span className="ml-1.5 text-slate-600 text-xs font-normal">✓</span>
                     )}
@@ -113,7 +113,7 @@ export default async function HomePage({
                 <div className="mb-6 flex items-start justify-between flex-wrap gap-3">
                   <div>
                     <h1 className="font-russo text-2xl text-white tracking-tight">
-                      Jornada {fecha.number}
+                      Fecha {fecha.number}
                       <span className="text-slate-500 font-sans font-normal text-xl ml-2">· Fase de Grupos</span>
                     </h1>
                     <p className="text-sm text-slate-500 mt-0.5">
