@@ -9,10 +9,17 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        urba: {
-          green: "#006633",
-          gold: "#FFD700",
+        mundial: {
+          base: "#060D1A",
+          surface: "#0D1B2A",
+          elevated: "#132236",
+          green: "#22C55E",
+          gold: "#FBBF24",
         },
+      },
+      fontFamily: {
+        sans: ["var(--font-inter)", "ui-sans-serif", "system-ui", "sans-serif"],
+        russo: ["var(--font-russo)", "sans-serif"],
       },
     },
   },

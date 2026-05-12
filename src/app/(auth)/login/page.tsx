@@ -38,30 +38,38 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4"
-      style={{ background: "linear-gradient(135deg, #0c2461 0%, #1e3799 50%, #0a3d62 100%)" }}>
-
-      <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-5">
-        {[...Array(8)].map((_, i) => (
-          <div key={i} className="absolute w-full h-px bg-white" style={{ top: `${12 + i * 11}%` }} />
+    <div
+      className="min-h-screen flex items-center justify-center px-4"
+      style={{
+        background: "radial-gradient(ellipse at 50% 0%, rgba(34,197,94,0.08) 0%, transparent 60%), linear-gradient(180deg, #060D1A 0%, #0B1628 100%)",
+      }}
+    >
+      {/* Stadium lines decoration */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {[...Array(6)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute w-full h-px bg-white/[0.04]"
+            style={{ top: `${15 + i * 14}%` }}
+          />
         ))}
       </div>
 
       <div className="relative w-full max-w-sm">
-        <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 p-8">
+        <div className="bg-mundial-surface/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/10 p-8">
 
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-800 rounded-2xl mb-4 shadow-lg text-3xl">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-green-600/80 border border-green-500/30 rounded-2xl mb-4 shadow-lg shadow-green-500/20 text-3xl">
               ⚽
             </div>
-            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Mundial Prode 2026</h1>
-            <p className="text-blue-700 text-sm font-semibold mt-0.5">FIFA World Cup 2026</p>
+            <h1 className="font-russo text-2xl text-white tracking-tight">Mundial Prode 2026</h1>
+            <p className="text-green-400 text-sm font-semibold mt-0.5">FIFA World Cup 2026</p>
             <p className="text-slate-500 text-sm mt-2">Ingresá para hacer tus predicciones</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+              <label className="block text-sm font-semibold text-slate-300 mb-1.5">
                 Email
               </label>
               <input
@@ -77,7 +85,7 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+              <label className="block text-sm font-semibold text-slate-300 mb-1.5">
                 Contraseña
               </label>
               <input
@@ -92,7 +100,7 @@ export default function LoginPage() {
             </div>
 
             {error && (
-              <div className="flex items-center gap-2 text-red-700 text-sm bg-red-50 border border-red-200 p-3 rounded-xl">
+              <div className="flex items-center gap-2 text-red-400 text-sm bg-red-500/10 border border-red-500/20 p-3 rounded-xl">
                 <span>⚠</span>
                 <span>{error}</span>
               </div>
@@ -108,14 +116,14 @@ export default function LoginPage() {
           </form>
 
           <div className="text-center mt-4">
-            <Link href="/forgot-password" className="text-sm text-blue-700 hover:underline">
+            <Link href="/forgot-password" className="text-sm text-green-400 hover:text-green-300 transition-colors">
               ¿Olvidaste tu contraseña?
             </Link>
           </div>
 
           <p className="text-center text-sm text-slate-500 mt-4">
             ¿No tenés cuenta?{" "}
-            <Link href="/register" className="text-blue-700 font-bold hover:underline">
+            <Link href="/register" className="text-green-400 font-bold hover:text-green-300 transition-colors">
               Registrate
             </Link>
           </p>

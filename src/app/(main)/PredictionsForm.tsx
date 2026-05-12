@@ -75,17 +75,17 @@ export default function PredictionsForm({ matches, initialPredictions, deadlineP
       {!deadlinePassed && openMatches.length > 0 && (
         <div className="mb-6 card py-3 px-4">
           <div className="flex items-center justify-between mb-2">
-            <span className={`text-sm font-semibold ${allPredicted ? "text-blue-700" : "text-slate-600"}`}>
+            <span className={`text-sm font-semibold ${allPredicted ? "text-green-400" : "text-slate-300"}`}>
               {allPredicted ? "✓ Todos predichos" : `${predictedCount} de ${openMatches.length} predichos`}
             </span>
-            <span className="text-sm font-bold tabular-nums text-slate-400">
+            <span className="text-sm font-bold tabular-nums text-slate-500">
               {Math.round(progress)}%
             </span>
           </div>
-          <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+          <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden">
             <div
               className={`h-2 rounded-full transition-all duration-500 ${
-                allPredicted ? "bg-blue-500" : "bg-blue-600"
+                allPredicted ? "bg-green-400" : "bg-green-600"
               }`}
               style={{ width: `${progress}%` }}
             />
@@ -114,12 +114,12 @@ export default function PredictionsForm({ matches, initialPredictions, deadlineP
       {!deadlinePassed && (
         <div className="flex flex-col items-center gap-3 pb-4">
           {error && (
-            <div className="flex items-center gap-2 text-red-700 text-sm bg-red-50 border border-red-200 px-4 py-2.5 rounded-xl">
+            <div className="flex items-center gap-2 text-red-400 text-sm bg-red-500/10 border border-red-500/20 px-4 py-2.5 rounded-xl">
               <span>⚠</span> {error}
             </div>
           )}
           {saved && (
-            <div className="flex items-center gap-2 text-blue-700 text-sm bg-blue-50 border border-blue-200 px-4 py-2.5 rounded-xl font-semibold">
+            <div className="flex items-center gap-2 text-green-400 text-sm bg-green-500/10 border border-green-500/20 px-4 py-2.5 rounded-xl font-semibold">
               <span>✓</span> Predicciones guardadas
             </div>
           )}
@@ -131,7 +131,7 @@ export default function PredictionsForm({ matches, initialPredictions, deadlineP
             {saving ? "Guardando..." : "Guardar predicciones"}
           </button>
           {!allPredicted && openMatches.length > 0 && (
-            <p className="text-xs text-amber-600 font-medium">
+            <p className="text-xs text-amber-500 font-medium">
               ⚠ {openMatches.length - predictedCount} partido{openMatches.length - predictedCount !== 1 ? "s" : ""} sin predicción
             </p>
           )}

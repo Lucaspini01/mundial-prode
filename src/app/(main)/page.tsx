@@ -23,7 +23,6 @@ export default async function HomePage({
   const { phase: phaseParam } = await searchParams;
   const phase: Phase = PHASES.includes(phaseParam as Phase) ? (phaseParam as Phase) : "GRUPOS";
 
-  // Check which phases have an active fecha
   const activeFechas = await prisma.fecha.findMany({
     where: { isActive: true },
     select: { phase: true },
@@ -59,17 +58,17 @@ export default async function HomePage({
             <Link
               key={p}
               href={`/?phase=${p}`}
-              className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+              className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-150 ${
                 isSelected
-                  ? "bg-slate-900 text-white"
+                  ? "bg-green-600 text-white shadow-lg shadow-green-500/20"
                   : hasActive
-                  ? "bg-slate-100 text-slate-700 hover:bg-slate-200"
-                  : "bg-slate-50 text-slate-400 hover:bg-slate-100"
+                  ? "bg-white/10 text-slate-300 hover:bg-white/15 hover:text-white"
+                  : "text-slate-600 hover:bg-white/[0.06] hover:text-slate-400"
               }`}
             >
               {PHASE_LABELS[p]}
               {hasActive && !isSelected && (
-                <span className="ml-1.5 inline-block w-1.5 h-1.5 rounded-full bg-blue-500 align-middle" />
+                <span className="ml-1.5 inline-block w-1.5 h-1.5 rounded-full bg-green-500 align-middle" />
               )}
             </Link>
           );
@@ -78,11 +77,11 @@ export default async function HomePage({
 
       {!fecha ? (
         <div className="flex flex-col items-center justify-center py-24 text-center">
-          <div className="w-20 h-20 rounded-3xl bg-slate-100 flex items-center justify-center text-4xl mb-5 shadow-sm">
+          <div className="w-20 h-20 rounded-3xl bg-white/[0.06] border border-white/10 flex items-center justify-center text-4xl mb-5">
             ⚽
           </div>
-          <h2 className="text-xl font-bold text-slate-700 mb-2">No hay fecha activa</h2>
-          <p className="text-slate-400 text-sm max-w-xs leading-relaxed">
+          <h2 className="font-russo text-xl text-slate-300 mb-2">No hay fecha activa</h2>
+          <p className="text-slate-500 text-sm max-w-xs leading-relaxed">
             El administrador todavía no activó una fecha para {PHASE_LABELS[phase]}. Volvé pronto para hacer tus predicciones.
           </p>
         </div>
@@ -90,11 +89,11 @@ export default async function HomePage({
         <>
           <div className="mb-6 flex items-start justify-between flex-wrap gap-3">
             <div>
-              <h1 className="text-2xl font-black text-slate-900 tracking-tight">
+              <h1 className="font-russo text-2xl text-white tracking-tight">
                 Fecha {fecha.number}
-                <span className="text-slate-400 font-normal text-xl ml-2">· {fecha.season}</span>
+                <span className="text-slate-500 font-sans font-normal text-xl ml-2">· {fecha.season}</span>
               </h1>
-              <p className="text-sm text-slate-400 mt-0.5">
+              <p className="text-sm text-slate-500 mt-0.5">
                 {fecha.matches.length} partido{fecha.matches.length !== 1 ? "s" : ""}
               </p>
             </div>
@@ -102,8 +101,8 @@ export default async function HomePage({
               <span
                 className={`text-sm font-semibold px-3 py-1.5 rounded-xl border ${
                   deadlinePassed
-                    ? "bg-red-50 text-red-700 border-red-200"
-                    : "bg-amber-50 text-amber-700 border-amber-200"
+                    ? "bg-red-500/10 text-red-400 border-red-500/20"
+                    : "bg-amber-500/10 text-amber-400 border-amber-500/20"
                 }`}
               >
                 {deadlinePassed
@@ -114,9 +113,9 @@ export default async function HomePage({
           </div>
 
           {fecha.matches.length === 0 ? (
-            <div className="text-center py-16 text-slate-400">
+            <div className="text-center py-16 text-slate-500">
               <p>No hay partidos cargados para esta fecha.</p>
-              <p className="text-sm mt-1">Esperá que el admin agregue los partidos.</p>
+              <p className="text-sm mt-1 text-slate-600">Esperá que el admin agregue los partidos.</p>
             </div>
           ) : (
             <PredictionsForm
