@@ -2,13 +2,13 @@
 
 import { useState, useEffect } from "react";
 
-const TIRA_LABELS: Record<string, string> = {
-  PRIMERA: "Primera", INTERMEDIA: "Intermedia",
-  PRE_A: "Pre A", PRE_B: "Pre B", PRE_C: "Pre C", PRE_D: "Pre D",
+const PHASE_LABELS: Record<string, string> = {
+  GRUPOS: "Grupos", OCTAVOS: "Octavos", CUARTOS: "Cuartos",
+  SEMIFINAL: "Semifinal", TERCER_PUESTO: "3er Puesto", FINAL: "Final",
 };
 
 type Club = { id: number; name: string; shortName: string };
-type Fecha = { id: number; number: number; season: number; tira: string };
+type Fecha = { id: number; number: number; season: number; phase: string };
 type Match = {
   id: number;
   homeTeam: Club;
@@ -99,7 +99,7 @@ export default function ResultadosPage() {
           <option value="">Elegir fecha...</option>
           {fechas.map((f) => (
             <option key={f.id} value={f.id}>
-              {TIRA_LABELS[f.tira] ?? f.tira} — Fecha {f.number} · {f.season}
+              {PHASE_LABELS[f.phase] ?? f.phase} — Fecha {f.number} · {f.season}
             </option>
           ))}
         </select>
@@ -118,7 +118,7 @@ export default function ResultadosPage() {
                 {match.homeTeam.name} <span className="text-gray-400">vs</span>{" "}
                 {match.awayTeam.name}
                 {match.isFinished && (
-                  <span className="ml-2 text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
+                  <span className="ml-2 text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">
                     FINALIZADO
                   </span>
                 )}

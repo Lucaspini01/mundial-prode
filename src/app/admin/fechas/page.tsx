@@ -12,7 +12,6 @@ function toAR(utc: string): string {
   return new Date(utc).toLocaleString("es-AR", { timeZone: "America/Buenos_Aires", hour12: false });
 }
 
-// Parse a UTC ISO string back to Argentina date/time inputs
 function utcToARInputs(utc: string): { date: string; time: string } {
   const d = new Date(new Date(utc).getTime() - 3 * 60 * 60 * 1000);
   const date = d.toISOString().slice(0, 10);
@@ -20,23 +19,23 @@ function utcToARInputs(utc: string): { date: string; time: string } {
   return { date, time };
 }
 
-const TIRAS = ["PRIMERA", "INTERMEDIA", "PRE_A", "PRE_B", "PRE_C", "PRE_D"] as const;
-type TiraKey = (typeof TIRAS)[number];
+const PHASES = ["GRUPOS", "OCTAVOS", "CUARTOS", "SEMIFINAL", "TERCER_PUESTO", "FINAL"] as const;
+type PhaseKey = (typeof PHASES)[number];
 
-const TIRA_LABELS: Record<TiraKey, string> = {
-  PRIMERA: "Primera",
-  INTERMEDIA: "Intermedia",
-  PRE_A: "Pre A",
-  PRE_B: "Pre B",
-  PRE_C: "Pre C",
-  PRE_D: "Pre D",
+const PHASE_LABELS: Record<PhaseKey, string> = {
+  GRUPOS: "Grupos",
+  OCTAVOS: "Octavos",
+  CUARTOS: "Cuartos",
+  SEMIFINAL: "Semifinal",
+  TERCER_PUESTO: "3er Puesto",
+  FINAL: "Final",
 };
 
 type Fecha = {
   id: number;
   number: number;
   season: number;
-  tira: TiraKey;
+  phase: PhaseKey;
   isActive: boolean;
   deadline: string | null;
   _count: { matches: number };
@@ -47,30 +46,23 @@ export default function FechasPage() {
   const [form, setForm] = useState({
     number: "",
     season: "2026",
-    tira: "PRIMERA" as TiraKey,
+    phase: "GRUPOS" as PhaseKey,
     deadlineDate: "",
     deadlineTime: "",
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Edit state
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editForm, setEditForm] = useState({
     number: "",
     season: "",
-    tira: "PRIMERA" as TiraKey,
+    phase: "GRUPOS" as PhaseKey,
     deadlineDate: "",
     deadlineTime: "",
   });
   const [editLoading, setEditLoading] = useState(false);
   const [editError, setEditError] = useState("");
-
-  // Duplicate state
-  const [duplicating, setDuplicating] = useState<number | null>(null);
-  const [dupTiras, setDupTiras] = useState<Set<TiraKey>>(new Set());
-  const [dupLoading, setDupLoading] = useState(false);
-  const [dupMsg, setDupMsg] = useState("");
 
   async function load() {
     const r = await fetch("/api/admin/fechas");
@@ -91,7 +83,7 @@ export default function FechasPage() {
       body: JSON.stringify({
         number: parseInt(form.number),
         season: parseInt(form.season),
-        tira: form.tira,
+        phase: form.phase,
         deadline: form.deadlineDate
           ? toUTC(form.deadlineDate, form.deadlineTime || "23:59")
           : null,
@@ -104,7 +96,7 @@ export default function FechasPage() {
       const d = await res.json();
       setError(d.error || "Error al crear fecha.");
     } else {
-      setForm({ number: "", season: "2026", tira: "PRIMERA", deadlineDate: "", deadlineTime: "" });
+      setForm({ number: "", season: "2026", phase: "GRUPOS", deadlineDate: "", deadlineTime: "" });
       load();
     }
   }
@@ -115,12 +107,11 @@ export default function FechasPage() {
     setEditForm({
       number: String(f.number),
       season: String(f.season),
-      tira: f.tira,
+      phase: f.phase,
       deadlineDate: dl.date,
       deadlineTime: dl.time,
     });
     setEditError("");
-    setDuplicating(null);
   }
 
   async function handleEdit(fechaId: number) {
@@ -133,7 +124,7 @@ export default function FechasPage() {
       body: JSON.stringify({
         number: parseInt(editForm.number),
         season: parseInt(editForm.season),
-        tira: editForm.tira,
+        phase: editForm.phase,
         deadline: editForm.deadlineDate
           ? toUTC(editForm.deadlineDate, editForm.deadlineTime || "23:59")
           : null,
@@ -160,56 +151,15 @@ export default function FechasPage() {
     load();
   }
 
-  async function handleDelete(id: number, number: number, tira: TiraKey) {
-    if (!confirm(`¿Borrar Fecha ${number} (${TIRA_LABELS[tira]})? Se eliminarán todos sus partidos y predicciones.`)) return;
+  async function handleDelete(id: number, number: number, phase: PhaseKey) {
+    if (!confirm(`¿Borrar Fecha ${number} (${PHASE_LABELS[phase]})? Se eliminarán todos sus partidos y predicciones.`)) return;
     await fetch(`/api/admin/fechas/${id}`, { method: "DELETE" });
     load();
   }
 
-  function openDuplicate(f: Fecha) {
-    setDuplicating(f.id);
-    setDupTiras(new Set());
-    setDupMsg("");
-    setEditingId(null);
-  }
-
-  function toggleDupTira(tira: TiraKey) {
-    setDupTiras((prev) => {
-      const next = new Set(prev);
-      if (next.has(tira)) next.delete(tira);
-      else next.add(tira);
-      return next;
-    });
-  }
-
-  async function handleDuplicate(sourceFecha: Fecha) {
-    if (dupTiras.size === 0) return;
-    setDupLoading(true);
-    setDupMsg("");
-
-    const res = await fetch(`/api/admin/fechas/${sourceFecha.id}/duplicate`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ targetTiras: Array.from(dupTiras) }),
-    });
-
-    setDupLoading(false);
-
-    if (!res.ok) {
-      const d = await res.json();
-      setDupMsg(d.error || "Error al duplicar.");
-    } else {
-      const d = await res.json();
-      setDupMsg(`✓ ${d.created} fecha${d.created !== 1 ? "s" : ""} creada${d.created !== 1 ? "s" : ""}`);
-      setDupTiras(new Set());
-      load();
-      setTimeout(() => { setDuplicating(null); setDupMsg(""); }, 1500);
-    }
-  }
-
-  const grouped = TIRAS.map((tira) => ({
-    tira,
-    items: fechas.filter((f) => f.tira === tira).sort((a, b) => a.number - b.number),
+  const grouped = PHASES.map((phase) => ({
+    phase,
+    items: fechas.filter((f) => f.phase === phase).sort((a, b) => a.number - b.number),
   })).filter((g) => g.items.length > 0);
 
   return (
@@ -246,15 +196,15 @@ export default function FechasPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Tira</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Fase</label>
               <select
                 className="input"
-                value={form.tira}
-                onChange={(e) => setForm({ ...form, tira: e.target.value as TiraKey })}
+                value={form.phase}
+                onChange={(e) => setForm({ ...form, phase: e.target.value as PhaseKey })}
                 required
               >
-                {TIRAS.map((t) => (
-                  <option key={t} value={t}>{TIRA_LABELS[t]}</option>
+                {PHASES.map((p) => (
+                  <option key={p} value={p}>{PHASE_LABELS[p]}</option>
                 ))}
               </select>
             </div>
@@ -289,32 +239,31 @@ export default function FechasPage() {
           </form>
         </div>
 
-        {/* Lista de fechas agrupadas por tira */}
+        {/* Lista de fechas agrupadas por fase */}
         <div className="card">
           <h2 className="font-semibold text-gray-700 mb-4">Fechas ({fechas.length})</h2>
           {fechas.length === 0 && (
             <p className="text-gray-400 text-sm">No hay fechas creadas.</p>
           )}
           <div className="space-y-4">
-            {grouped.map(({ tira, items }) => (
-              <div key={tira}>
+            {grouped.map(({ phase, items }) => (
+              <div key={phase}>
                 <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">
-                  {TIRA_LABELS[tira]}
+                  {PHASE_LABELS[phase]}
                 </p>
                 <div className="space-y-2">
                   {items.map((f) => (
                     <div key={f.id}>
-                      {/* Fila principal */}
                       <div
                         className={`flex items-center justify-between p-3 rounded-lg border ${
-                          f.isActive ? "border-green-500 bg-green-50" : "border-gray-200"
+                          f.isActive ? "border-blue-500 bg-blue-50" : "border-gray-200"
                         }`}
                       >
                         <div>
                           <p className="font-medium text-sm">
                             Fecha {f.number} · {f.season}
                             {f.isActive && (
-                              <span className="ml-2 text-xs bg-green-600 text-white px-2 py-0.5 rounded-full">
+                              <span className="ml-2 text-xs bg-blue-600 text-white px-2 py-0.5 rounded-full">
                                 ACTIVA
                               </span>
                             )}
@@ -335,12 +284,6 @@ export default function FechasPage() {
                           >
                             Editar
                           </button>
-                          <button
-                            onClick={() => duplicating === f.id ? setDuplicating(null) : openDuplicate(f)}
-                            className="text-xs py-1 px-2.5 rounded-lg border border-blue-300 text-blue-600 hover:bg-blue-50 transition-colors"
-                          >
-                            Duplicar
-                          </button>
                           {f.isActive ? (
                             <button
                               onClick={() => handleToggle(f.id, false)}
@@ -357,7 +300,7 @@ export default function FechasPage() {
                             </button>
                           )}
                           <button
-                            onClick={() => handleDelete(f.id, f.number, f.tira)}
+                            onClick={() => handleDelete(f.id, f.number, f.phase)}
                             className="text-xs py-1 px-2.5 rounded-lg border border-red-300 text-red-600 hover:bg-red-50 transition-colors"
                           >
                             Borrar
@@ -391,14 +334,14 @@ export default function FechasPage() {
                             </div>
                           </div>
                           <div>
-                            <label className="text-xs text-gray-500 mb-0.5 block">Tira</label>
+                            <label className="text-xs text-gray-500 mb-0.5 block">Fase</label>
                             <select
                               className="input text-sm py-1"
-                              value={editForm.tira}
-                              onChange={(e) => setEditForm({ ...editForm, tira: e.target.value as TiraKey })}
+                              value={editForm.phase}
+                              onChange={(e) => setEditForm({ ...editForm, phase: e.target.value as PhaseKey })}
                             >
-                              {TIRAS.map((t) => (
-                                <option key={t} value={t}>{TIRA_LABELS[t]}</option>
+                              {PHASES.map((p) => (
+                                <option key={p} value={p}>{PHASE_LABELS[p]}</option>
                               ))}
                             </select>
                           </div>
@@ -433,47 +376,6 @@ export default function FechasPage() {
                             </button>
                             <button
                               onClick={() => setEditingId(null)}
-                              className="btn-secondary text-xs py-1 px-3"
-                            >
-                              Cancelar
-                            </button>
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Panel de duplicar */}
-                      {duplicating === f.id && (
-                        <div className="mt-1 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                          <p className="text-xs font-semibold text-blue-700 mb-2">
-                            Duplicar Fecha {f.number} a otras tiras:
-                          </p>
-                          <div className="flex flex-wrap gap-2 mb-3">
-                            {TIRAS.filter((t) => t !== f.tira).map((t) => (
-                              <label key={t} className="flex items-center gap-1.5 text-xs cursor-pointer">
-                                <input
-                                  type="checkbox"
-                                  checked={dupTiras.has(t)}
-                                  onChange={() => toggleDupTira(t)}
-                                />
-                                {TIRA_LABELS[t]}
-                              </label>
-                            ))}
-                          </div>
-                          {dupMsg && (
-                            <p className={`text-xs mb-2 ${dupMsg.startsWith("✓") ? "text-green-600" : "text-red-600"}`}>
-                              {dupMsg}
-                            </p>
-                          )}
-                          <div className="flex gap-2">
-                            <button
-                              onClick={() => handleDuplicate(f)}
-                              disabled={dupLoading || dupTiras.size === 0}
-                              className="btn-primary text-xs py-1 px-3"
-                            >
-                              {dupLoading ? "Duplicando..." : `Duplicar a ${dupTiras.size} tira${dupTiras.size !== 1 ? "s" : ""}`}
-                            </button>
-                            <button
-                              onClick={() => setDuplicating(null)}
                               className="btn-secondary text-xs py-1 px-3"
                             >
                               Cancelar

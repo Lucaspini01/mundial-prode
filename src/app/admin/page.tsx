@@ -31,12 +31,12 @@ export default async function AdminDashboard() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         {stats.map((s) => (
           <div key={s.label} className="card text-center">
-            <p className="text-3xl font-bold text-green-700">{s.value}</p>
+            <p className="text-3xl font-bold text-blue-700">{s.value}</p>
             <p className="text-sm text-gray-500 mt-1">{s.label}</p>
             {s.href && (
               <Link
                 href={s.href}
-                className="text-xs text-green-600 hover:underline mt-2 inline-block"
+                className="text-xs text-blue-600 hover:underline mt-2 inline-block"
               >
                 Administrar →
               </Link>

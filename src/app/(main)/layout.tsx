@@ -17,8 +17,8 @@ export default async function MainLayout({
     <div className="min-h-screen flex flex-col">
       <Navbar
         username={session.user.username}
-        clubLogo={session.user.clubLogo}
-        clubShortName={session.user.clubShortName}
+        favoriteTeamFlag={session.user.favoriteTeamFlag}
+        favoriteTeamShort={session.user.favoriteTeamShort}
         isAdmin={session.user.isAdmin}
       />
       <main className="flex-1 max-w-5xl mx-auto w-full px-4 py-6">

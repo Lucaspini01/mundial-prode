@@ -3,6 +3,15 @@ import { prisma } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
+const PHASE_LABELS: Record<string, string> = {
+  GRUPOS: "Grupos",
+  OCTAVOS: "Octavos",
+  CUARTOS: "Cuartos",
+  SEMIFINAL: "Semifinal",
+  TERCER_PUESTO: "3er Puesto",
+  FINAL: "Final",
+};
+
 function PickBadge({ pick, homeShort, awayShort }: {
   pick: "HOME" | "AWAY" | "DRAW";
   homeShort: string;
@@ -29,17 +38,17 @@ function PickBadge({ pick, homeShort, awayShort }: {
   );
 }
 
-function MarginBadge({ margin }: { margin: "MORE_7" | "LESS_7" }) {
-  if (margin === "MORE_7") {
+function MarginBadge({ margin }: { margin: "MORE_1" | "LESS_1" }) {
+  if (margin === "MORE_1") {
     return (
       <span className="inline-flex items-center text-xs font-medium bg-orange-50 text-orange-700 border border-orange-200 px-2 py-0.5 rounded-lg">
-        &gt;7 pts
+        2+ goles
       </span>
     );
   }
   return (
     <span className="inline-flex items-center text-xs font-medium bg-teal-50 text-teal-700 border border-teal-200 px-2 py-0.5 rounded-lg">
-      ≤7 pts
+      ≤ 1 gol
     </span>
   );
 }
@@ -65,7 +74,7 @@ export default async function HistorialPage() {
   });
 
   const byFecha = predictions.reduce<
-    Record<number, { fecha: { id: number; number: number; season: number }; preds: typeof predictions }>
+    Record<number, { fecha: { id: number; number: number; season: number; phase: string }; preds: typeof predictions }>
   >((acc, p) => {
     const fid = p.match.fechaId;
     if (!acc[fid]) acc[fid] = { fecha: p.match.fecha, preds: [] };
@@ -107,14 +116,14 @@ export default async function HistorialPage() {
                   <h2 className="text-base font-bold text-slate-700">
                     Fecha {fecha.number}
                   </h2>
-                  <span className="text-slate-400 text-sm">· {fecha.season}</span>
+                  <span className="text-slate-400 text-sm">· {PHASE_LABELS[fecha.phase] ?? fecha.phase} · {fecha.season}</span>
                 </div>
                 {calculated ? (
                   <div className="flex items-center gap-3">
                     <span className="text-xs text-slate-400">
                       {correctPicks}/{preds.length} acertados
                     </span>
-                    <span className="text-base font-black text-green-700 bg-green-50 border border-green-200 px-3 py-1 rounded-xl tabular-nums">
+                    <span className="text-base font-black text-blue-700 bg-blue-50 border border-blue-200 px-3 py-1 rounded-xl tabular-nums">
                       {totalPoints} pts
                     </span>
                   </div>

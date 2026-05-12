@@ -1,14 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import ClubImage from "./ClubImage";
+import TeamFlag from "./TeamFlag";
 
-type Club = { id: number; name: string; shortName: string; logoPath: string };
+type Team = { id: number; name: string; shortName: string; flagCode: string | null };
 
 type Match = {
   id: number;
-  homeTeam: Club;
-  awayTeam: Club;
+  homeTeam: Team;
+  awayTeam: Team;
   scheduledAt: string | null;
   isFinished: boolean;
   homeScore: number | null;
@@ -18,7 +18,7 @@ type Match = {
 export type PredictionInput = {
   matchId: number;
   pick: "HOME" | "AWAY" | "DRAW";
-  margin: "MORE_7" | "LESS_7";
+  margin: "MORE_1" | "LESS_1";
 };
 
 type Props = {
@@ -33,10 +33,10 @@ export default function MatchCard({ match, prediction, locked, onChange }: Props
   const margin = prediction?.margin;
 
   function setPick(p: "HOME" | "AWAY" | "DRAW") {
-    onChange({ matchId: match.id, pick: p, margin: margin ?? "LESS_7" });
+    onChange({ matchId: match.id, pick: p, margin: margin ?? "LESS_1" });
   }
 
-  function setMargin(m: "MORE_7" | "LESS_7") {
+  function setMargin(m: "MORE_1" | "LESS_1") {
     onChange({ matchId: match.id, pick: pick ?? "HOME", margin: m });
   }
 
@@ -58,7 +58,7 @@ export default function MatchCard({ match, prediction, locked, onChange }: Props
         locked
           ? "opacity-75"
           : isPredicted
-          ? "ring-1 ring-green-600/30 hover:shadow-md hover:-translate-y-0.5"
+          ? "ring-1 ring-blue-600/30 hover:shadow-md hover:-translate-y-0.5"
           : "hover:shadow-md hover:-translate-y-0.5 ring-1 ring-transparent hover:ring-slate-200"
       }`}
     >
@@ -74,7 +74,7 @@ export default function MatchCard({ match, prediction, locked, onChange }: Props
             Final
           </span>
         ) : isPredicted && !locked ? (
-          <span className="text-[10px] font-semibold text-green-700 bg-green-50 border border-green-200 px-2 py-0.5 rounded-md">
+          <span className="text-[10px] font-semibold text-blue-700 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-md">
             ✓ Predicho
           </span>
         ) : null}
@@ -83,11 +83,11 @@ export default function MatchCard({ match, prediction, locked, onChange }: Props
       {/* Teams */}
       <div className="flex items-center gap-2">
         <div className="flex-1 flex flex-col items-center gap-1.5">
-          <ClubImage
-            logoPath={match.homeTeam.logoPath}
+          <TeamFlag
+            flagCode={match.homeTeam.flagCode}
             shortName={match.homeTeam.shortName}
             size={64}
-            className="bg-white ring-1 ring-slate-100 shadow-sm"
+            className="ring-1 ring-slate-100 shadow-sm"
           />
           <span className="text-xs font-bold text-slate-700 text-center leading-tight max-w-[60px] truncate">
             {match.homeTeam.shortName}
@@ -116,11 +116,11 @@ export default function MatchCard({ match, prediction, locked, onChange }: Props
         </div>
 
         <div className="flex-1 flex flex-col items-center gap-1.5">
-          <ClubImage
-            logoPath={match.awayTeam.logoPath}
+          <TeamFlag
+            flagCode={match.awayTeam.flagCode}
             shortName={match.awayTeam.shortName}
             size={64}
-            className="bg-white ring-1 ring-slate-100 shadow-sm"
+            className="ring-1 ring-slate-100 shadow-sm"
           />
           <span className="text-xs font-bold text-slate-700 text-center leading-tight max-w-[60px] truncate">
             {match.awayTeam.shortName}
@@ -151,7 +151,7 @@ export default function MatchCard({ match, prediction, locked, onChange }: Props
                   locked ? "cursor-not-allowed" : "cursor-pointer"
                 } ${
                   isSelected
-                    ? "bg-white shadow-sm text-green-800 font-bold ring-1 ring-green-700/20"
+                    ? "bg-white shadow-sm text-blue-800 font-bold ring-1 ring-blue-700/20"
                     : "text-slate-500 hover:text-slate-700"
                 }`}
               >
@@ -177,8 +177,8 @@ export default function MatchCard({ match, prediction, locked, onChange }: Props
           ¿Por cuánto?
         </p>
         <div className="flex gap-1 p-1 bg-slate-100 rounded-xl">
-          {(["LESS_7", "MORE_7"] as const).map((m) => {
-            const label = m === "LESS_7" ? "≤ 7 pts" : "> 7 pts";
+          {(["LESS_1", "MORE_1"] as const).map((m) => {
+            const label = m === "LESS_1" ? "≤ 1 gol" : "2+ goles";
             const isSelected = margin === m;
             return (
               <label

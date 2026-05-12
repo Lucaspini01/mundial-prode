@@ -1,37 +1,37 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { Tira } from "@prisma/client";
+import { Phase } from "@prisma/client";
 import Link from "next/link";
 import PredictionsForm from "./PredictionsForm";
 
-const TIRAS: Tira[] = ["PRIMERA", "INTERMEDIA", "PRE_A", "PRE_B", "PRE_C", "PRE_D"];
-const TIRA_LABELS: Record<Tira, string> = {
-  PRIMERA: "Primera",
-  INTERMEDIA: "Intermedia",
-  PRE_A: "Pre A",
-  PRE_B: "Pre B",
-  PRE_C: "Pre C",
-  PRE_D: "Pre D",
+const PHASES: Phase[] = ["GRUPOS", "OCTAVOS", "CUARTOS", "SEMIFINAL", "TERCER_PUESTO", "FINAL"];
+const PHASE_LABELS: Record<Phase, string> = {
+  GRUPOS: "Grupos",
+  OCTAVOS: "Octavos",
+  CUARTOS: "Cuartos",
+  SEMIFINAL: "Semifinal",
+  TERCER_PUESTO: "3er Puesto",
+  FINAL: "Final",
 };
 
 export default async function HomePage({
   searchParams,
 }: {
-  searchParams: Promise<{ tira?: string }>;
+  searchParams: Promise<{ phase?: string }>;
 }) {
   const session = await auth();
-  const { tira: tiraParam } = await searchParams;
-  const tira: Tira = TIRAS.includes(tiraParam as Tira) ? (tiraParam as Tira) : "PRIMERA";
+  const { phase: phaseParam } = await searchParams;
+  const phase: Phase = PHASES.includes(phaseParam as Phase) ? (phaseParam as Phase) : "GRUPOS";
 
-  // Check which tiras have an active fecha
+  // Check which phases have an active fecha
   const activeFechas = await prisma.fecha.findMany({
     where: { isActive: true },
-    select: { tira: true },
+    select: { phase: true },
   });
-  const activeTiras = new Set(activeFechas.map((f) => f.tira));
+  const activePhases = new Set(activeFechas.map((f) => f.phase));
 
   const fecha = await prisma.fecha.findFirst({
-    where: { isActive: true, tira },
+    where: { isActive: true, phase },
     include: {
       matches: {
         orderBy: { scheduledAt: "asc" },
@@ -50,15 +50,15 @@ export default async function HomePage({
 
   return (
     <div>
-      {/* Tira tabs */}
+      {/* Phase tabs */}
       <div className="flex gap-1 mb-6 overflow-x-auto pb-1">
-        {TIRAS.map((t) => {
-          const isSelected = t === tira;
-          const hasActive = activeTiras.has(t);
+        {PHASES.map((p) => {
+          const isSelected = p === phase;
+          const hasActive = activePhases.has(p);
           return (
             <Link
-              key={t}
-              href={`/?tira=${t}`}
+              key={p}
+              href={`/?phase=${p}`}
               className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
                 isSelected
                   ? "bg-slate-900 text-white"
@@ -67,9 +67,9 @@ export default async function HomePage({
                   : "bg-slate-50 text-slate-400 hover:bg-slate-100"
               }`}
             >
-              {TIRA_LABELS[t]}
+              {PHASE_LABELS[p]}
               {hasActive && !isSelected && (
-                <span className="ml-1.5 inline-block w-1.5 h-1.5 rounded-full bg-green-500 align-middle" />
+                <span className="ml-1.5 inline-block w-1.5 h-1.5 rounded-full bg-blue-500 align-middle" />
               )}
             </Link>
           );
@@ -79,11 +79,11 @@ export default async function HomePage({
       {!fecha ? (
         <div className="flex flex-col items-center justify-center py-24 text-center">
           <div className="w-20 h-20 rounded-3xl bg-slate-100 flex items-center justify-center text-4xl mb-5 shadow-sm">
-            🏉
+            ⚽
           </div>
           <h2 className="text-xl font-bold text-slate-700 mb-2">No hay fecha activa</h2>
           <p className="text-slate-400 text-sm max-w-xs leading-relaxed">
-            El administrador todavía no activó una fecha para {TIRA_LABELS[tira]}. Volvé pronto para hacer tus predicciones.
+            El administrador todavía no activó una fecha para {PHASE_LABELS[phase]}. Volvé pronto para hacer tus predicciones.
           </p>
         </div>
       ) : (

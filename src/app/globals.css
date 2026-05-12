@@ -4,8 +4,8 @@
 
 @layer base {
   :root {
-    --urba-green: #006633;
-    --urba-gold: #FFD700;
+    --mundial-blue: #1e3799;
+    --mundial-gold: #FFD700;
   }
 
   html {
@@ -19,7 +19,7 @@
 
 @layer components {
   .btn-primary {
-    @apply bg-green-800 hover:bg-green-700 active:scale-95 text-white font-semibold py-2 px-4 rounded-xl
+    @apply bg-blue-800 hover:bg-blue-700 active:scale-95 text-white font-semibold py-2 px-4 rounded-xl
            transition-all duration-150 shadow-sm hover:shadow-md
            disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-sm disabled:active:scale-100;
   }
@@ -33,7 +33,7 @@
   }
   .input {
     @apply w-full border border-slate-200 rounded-xl px-3.5 py-2.5
-           focus:outline-none focus:ring-2 focus:ring-green-600/40 focus:border-green-600
+           focus:outline-none focus:ring-2 focus:ring-blue-600/40 focus:border-blue-600
            transition-colors bg-white text-slate-900 placeholder:text-slate-400 shadow-sm;
   }
   .card {

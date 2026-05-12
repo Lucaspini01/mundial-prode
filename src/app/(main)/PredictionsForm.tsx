@@ -3,12 +3,12 @@
 import { useState } from "react";
 import MatchCard, { type PredictionInput } from "@/components/MatchCard";
 
-type Club = { id: number; name: string; shortName: string; logoPath: string };
+type Team = { id: number; name: string; shortName: string; flagCode: string | null };
 
 type Match = {
   id: number;
-  homeTeam: Club;
-  awayTeam: Club;
+  homeTeam: Team;
+  awayTeam: Team;
   scheduledAt: string | null;
   isFinished: boolean;
   homeScore: number | null;
@@ -75,7 +75,7 @@ export default function PredictionsForm({ matches, initialPredictions, deadlineP
       {!deadlinePassed && openMatches.length > 0 && (
         <div className="mb-6 card py-3 px-4">
           <div className="flex items-center justify-between mb-2">
-            <span className={`text-sm font-semibold ${allPredicted ? "text-green-700" : "text-slate-600"}`}>
+            <span className={`text-sm font-semibold ${allPredicted ? "text-blue-700" : "text-slate-600"}`}>
               {allPredicted ? "✓ Todos predichos" : `${predictedCount} de ${openMatches.length} predichos`}
             </span>
             <span className="text-sm font-bold tabular-nums text-slate-400">
@@ -85,7 +85,7 @@ export default function PredictionsForm({ matches, initialPredictions, deadlineP
           <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
             <div
               className={`h-2 rounded-full transition-all duration-500 ${
-                allPredicted ? "bg-green-500" : "bg-green-600"
+                allPredicted ? "bg-blue-500" : "bg-blue-600"
               }`}
               style={{ width: `${progress}%` }}
             />
@@ -119,7 +119,7 @@ export default function PredictionsForm({ matches, initialPredictions, deadlineP
             </div>
           )}
           {saved && (
-            <div className="flex items-center gap-2 text-green-700 text-sm bg-green-50 border border-green-200 px-4 py-2.5 rounded-xl font-semibold">
+            <div className="flex items-center gap-2 text-blue-700 text-sm bg-blue-50 border border-blue-200 px-4 py-2.5 rounded-xl font-semibold">
               <span>✓</span> Predicciones guardadas
             </div>
           )}

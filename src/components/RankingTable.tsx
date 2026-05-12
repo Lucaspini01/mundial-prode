@@ -1,13 +1,13 @@
 "use client";
 
-import ClubImage from "./ClubImage";
+import TeamFlag from "./TeamFlag";
 
 type RankingEntry = {
   rank: number;
   userId: number;
   username: string;
-  clubLogo: string;
-  clubShortName: string;
+  favoriteTeamFlag: string | null;
+  favoriteTeamShort: string | null;
   points: number;
   predictions: number;
 };
@@ -34,7 +34,6 @@ export default function RankingTable({
   }
 
   const podium = entries.filter((e) => e.rank <= 3);
-  const rest = entries.filter((e) => e.rank > 3);
 
   return (
     <div>
@@ -44,19 +43,19 @@ export default function RankingTable({
           {[podium[1], podium[0], podium[2]].filter(Boolean).map((entry) => {
             const isMe = entry.userId === currentUserId;
             const r = RANK_LABELS[entry.rank];
-            const logoSize = entry.rank === 1 ? 52 : 40;
+            const flagSize = entry.rank === 1 ? 52 : 40;
             return (
               <div
                 key={entry.userId}
                 className={`flex flex-col items-center gap-1.5 ${entry.rank === 1 ? "scale-105" : ""}`}
               >
-                <ClubImage
-                  logoPath={entry.clubLogo}
-                  shortName={entry.clubShortName}
-                  size={logoSize}
+                <TeamFlag
+                  flagCode={entry.favoriteTeamFlag}
+                  shortName={entry.favoriteTeamShort ?? entry.username.slice(0, 3).toUpperCase()}
+                  size={flagSize}
                   className="ring-2 ring-white shadow-md"
                 />
-                <span className={`text-xs font-bold truncate max-w-[72px] text-center ${isMe ? "text-green-700" : "text-slate-700"}`}>
+                <span className={`text-xs font-bold truncate max-w-[72px] text-center ${isMe ? "text-blue-700" : "text-slate-700"}`}>
                   {isMe ? "Vos" : entry.username}
                 </span>
                 <span className={`text-sm font-black ${r.text}`}>
@@ -77,7 +76,7 @@ export default function RankingTable({
           <thead>
             <tr className="text-left text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100">
               <th className="pb-3 pr-3 pl-1">#</th>
-              <th className="pb-3 pr-3">Club</th>
+              <th className="pb-3 pr-3">Bandera</th>
               <th className="pb-3 flex-1">Usuario</th>
               <th className="pb-3 text-right">Pred.</th>
               <th className="pb-3 text-right pl-4">Puntos</th>
@@ -90,7 +89,7 @@ export default function RankingTable({
                 <tr
                   key={entry.userId}
                   className={`transition-colors ${
-                    isMe ? "bg-green-50 hover:bg-green-100/70" : "hover:bg-slate-50"
+                    isMe ? "bg-blue-50 hover:bg-blue-100/70" : "hover:bg-slate-50"
                   } ${entry.rank <= 3 ? "font-semibold" : ""}`}
                 >
                   <td className="py-3 pr-3 pl-1">
@@ -101,20 +100,20 @@ export default function RankingTable({
                     )}
                   </td>
                   <td className="py-3 pr-3">
-                    <ClubImage
-                      logoPath={entry.clubLogo}
-                      shortName={entry.clubShortName}
+                    <TeamFlag
+                      flagCode={entry.favoriteTeamFlag}
+                      shortName={entry.favoriteTeamShort ?? entry.username.slice(0, 3).toUpperCase()}
                       size={32}
                       className="ring-1 ring-slate-100"
                     />
                   </td>
                   <td className="py-3">
                     <div className="flex items-center gap-2">
-                      <span className={`text-sm ${isMe ? "text-green-700 font-bold" : "text-slate-700"}`}>
+                      <span className={`text-sm ${isMe ? "text-blue-700 font-bold" : "text-slate-700"}`}>
                         {entry.username}
                       </span>
                       {isMe && (
-                        <span className="text-[10px] bg-green-100 text-green-700 font-bold px-1.5 py-0.5 rounded-md">
+                        <span className="text-[10px] bg-blue-100 text-blue-700 font-bold px-1.5 py-0.5 rounded-md">
                           vos
                         </span>
                       )}
@@ -124,7 +123,7 @@ export default function RankingTable({
                     {entry.predictions}
                   </td>
                   <td className="py-3 text-right pl-4">
-                    <span className="text-green-700 font-black text-base tabular-nums">
+                    <span className="text-blue-700 font-black text-base tabular-nums">
                       {entry.points}
                     </span>
                   </td>

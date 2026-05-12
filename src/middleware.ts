@@ -9,7 +9,7 @@ export function middleware(request: NextRequest) {
     pathname.startsWith("/register") ||
     pathname.startsWith("/api/auth") ||
     pathname.startsWith("/api/register") ||
-    pathname.startsWith("/api/clubs");
+    pathname.startsWith("/api/teams");
 
   if (isPublic) return NextResponse.next();
 
@@ -27,5 +27,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|clubs/).*)"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };

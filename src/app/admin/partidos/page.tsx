@@ -2,46 +2,43 @@
 
 import { useState, useEffect } from "react";
 
-const TIRAS = ["PRIMERA", "INTERMEDIA", "PRE_A", "PRE_B", "PRE_C", "PRE_D"] as const;
-type TiraKey = (typeof TIRAS)[number];
-const TIRA_LABELS: Record<TiraKey, string> = {
-  PRIMERA: "Primera",
-  INTERMEDIA: "Intermedia",
-  PRE_A: "Pre A",
-  PRE_B: "Pre B",
-  PRE_C: "Pre C",
-  PRE_D: "Pre D",
+const PHASE_LABELS: Record<string, string> = {
+  GRUPOS: "Grupos",
+  OCTAVOS: "Octavos",
+  CUARTOS: "Cuartos",
+  SEMIFINAL: "Semifinal",
+  TERCER_PUESTO: "3er Puesto",
+  FINAL: "Final",
 };
 
-type Club = { id: number; name: string; shortName: string };
-type Fecha = { id: number; number: number; season: number; tira: TiraKey };
+type Team = { id: number; name: string; shortName: string };
+type Fecha = { id: number; number: number; season: number; phase: string };
 type Match = {
   id: number;
-  homeTeam: Club;
-  awayTeam: Club;
+  homeTeam: Team;
+  awayTeam: Team;
   scheduledAt: string | null;
   isFinished: boolean;
 };
 
 export default function PartidosPage() {
-  const [clubs, setClubs] = useState<Club[]>([]);
+  const [teams, setTeams] = useState<Team[]>([]);
   const [fechas, setFechas] = useState<Fecha[]>([]);
   const [matches, setMatches] = useState<Match[]>([]);
   const [form, setForm] = useState({ fechaId: "", homeTeamId: "", awayTeamId: "", scheduledAt: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  // Edit state
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editForm, setEditForm] = useState({ homeTeamId: "", awayTeamId: "", scheduledAt: "" });
   const [editLoading, setEditLoading] = useState(false);
   const [editError, setEditError] = useState("");
 
   async function loadData() {
-    const [clubsRes, fechasRes] = await Promise.all([
-      fetch("/api/clubs"),
+    const [teamsRes, fechasRes] = await Promise.all([
+      fetch("/api/teams"),
       fetch("/api/admin/fechas"),
     ]);
-    setClubs(await clubsRes.json());
+    setTeams(await teamsRes.json());
     setFechas(await fechasRes.json());
   }
 
@@ -133,11 +130,12 @@ export default function PartidosPage() {
     loadMatches(form.fechaId);
   }
 
-  // Group fechas by tira for the dropdown
-  const groupedFechas = TIRAS.map((tira) => ({
-    tira,
-    items: fechas.filter((f) => f.tira === tira).sort((a, b) => a.number - b.number),
-  })).filter((g) => g.items.length > 0);
+  // Group fechas by phase for the dropdown
+  const phases = [...new Set(fechas.map((f) => f.phase))];
+  const groupedFechas = phases.map((phase) => ({
+    phase,
+    items: fechas.filter((f) => f.phase === phase).sort((a, b) => a.number - b.number),
+  }));
 
   return (
     <div>
@@ -157,8 +155,8 @@ export default function PartidosPage() {
                 required
               >
                 <option value="">Seleccionar fecha...</option>
-                {groupedFechas.map(({ tira, items }) => (
-                  <optgroup key={tira} label={TIRA_LABELS[tira]}>
+                {groupedFechas.map(({ phase, items }) => (
+                  <optgroup key={phase} label={PHASE_LABELS[phase] ?? phase}>
                     {items.map((f) => (
                       <option key={f.id} value={f.id}>
                         Fecha {f.number} · {f.season}
@@ -179,8 +177,8 @@ export default function PartidosPage() {
                   required
                 >
                   <option value="">Seleccionar...</option>
-                  {clubs.map((c) => (
-                    <option key={c.id} value={c.id}>{c.name}</option>
+                  {teams.map((t) => (
+                    <option key={t.id} value={t.id}>{t.name}</option>
                   ))}
                 </select>
               </div>
@@ -193,8 +191,8 @@ export default function PartidosPage() {
                   required
                 >
                   <option value="">Seleccionar...</option>
-                  {clubs.map((c) => (
-                    <option key={c.id} value={c.id}>{c.name}</option>
+                  {teams.map((t) => (
+                    <option key={t.id} value={t.id}>{t.name}</option>
                   ))}
                 </select>
               </div>
@@ -238,7 +236,6 @@ export default function PartidosPage() {
               {matches.map((m) => (
                 <div key={m.id}>
                   {editingId === m.id ? (
-                    /* Formulario de edición inline */
                     <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg space-y-2">
                       <div className="grid grid-cols-2 gap-2">
                         <div>
@@ -248,8 +245,8 @@ export default function PartidosPage() {
                             value={editForm.homeTeamId}
                             onChange={(e) => setEditForm({ ...editForm, homeTeamId: e.target.value })}
                           >
-                            {clubs.map((c) => (
-                              <option key={c.id} value={c.id}>{c.name}</option>
+                            {teams.map((t) => (
+                              <option key={t.id} value={t.id}>{t.name}</option>
                             ))}
                           </select>
                         </div>
@@ -260,8 +257,8 @@ export default function PartidosPage() {
                             value={editForm.awayTeamId}
                             onChange={(e) => setEditForm({ ...editForm, awayTeamId: e.target.value })}
                           >
-                            {clubs.map((c) => (
-                              <option key={c.id} value={c.id}>{c.name}</option>
+                            {teams.map((t) => (
+                              <option key={t.id} value={t.id}>{t.name}</option>
                             ))}
                           </select>
                         </div>

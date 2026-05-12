@@ -3,22 +3,62 @@ import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
-const clubs = [
-  { name: "Curupayti", shortName: "CUR", logoPath: "/clubs/curupayti.svg" },
-  { name: "Hurling Club", shortName: "HUR", logoPath: "/clubs/hurling.svg" },
-  { name: "Lomas Athletic", shortName: "LOM", logoPath: "/clubs/lomas-athletic.svg" },
-  { name: "San Luis", shortName: "SL", logoPath: "/clubs/san-luis.svg" },
-  { name: "Olivos RC", shortName: "ORC", logoPath: "/clubs/olivos.svg" },
-  { name: "Gimnasia y Esgrima (GEBA)", shortName: "GEBA", logoPath: "/clubs/geba.svg" },
-  { name: "San Albano", shortName: "SAL", logoPath: "/clubs/san-albano.svg" },
-  { name: "San Cirano", shortName: "SC", logoPath: "/clubs/san-cirano.svg" },
-  { name: "Deportiva Francesa", shortName: "ADF", logoPath: "/clubs/deportiva-francesa.svg" },
-  { name: "San Fernando", shortName: "CSF", logoPath: "/clubs/san-fernando.svg" },
-  { name: "Pueyrredon", shortName: "PUEY", logoPath: "/clubs/pueyrredon.svg" },
-  { name: "Universitario de la Plata", shortName: "UDLP", logoPath: "/clubs/universitario-lp.svg" },
-  { name: "San Andres", shortName: "SAN", logoPath: "/clubs/san-andres.svg" },
-  { name: "Pucara", shortName: "PUC", logoPath: "/clubs/pucara.svg" },
-  { name: "Algun Otro", shortName: "OTRO", logoPath: "/clubs/otros.svg" },
+const teams = [
+  // CONMEBOL
+  { name: "Argentina", shortName: "ARG", flagCode: "ar" },
+  { name: "Brasil", shortName: "BRA", flagCode: "br" },
+  { name: "Colombia", shortName: "COL", flagCode: "co" },
+  { name: "Uruguay", shortName: "URU", flagCode: "uy" },
+  { name: "Ecuador", shortName: "ECU", flagCode: "ec" },
+  { name: "Venezuela", shortName: "VEN", flagCode: "ve" },
+  // CONCACAF
+  { name: "Estados Unidos", shortName: "USA", flagCode: "us" },
+  { name: "México", shortName: "MEX", flagCode: "mx" },
+  { name: "Canadá", shortName: "CAN", flagCode: "ca" },
+  { name: "Panamá", shortName: "PAN", flagCode: "pa" },
+  { name: "Costa Rica", shortName: "CRC", flagCode: "cr" },
+  { name: "Honduras", shortName: "HON", flagCode: "hn" },
+  // UEFA
+  { name: "Alemania", shortName: "GER", flagCode: "de" },
+  { name: "Francia", shortName: "FRA", flagCode: "fr" },
+  { name: "España", shortName: "ESP", flagCode: "es" },
+  { name: "Inglaterra", shortName: "ENG", flagCode: "gb-eng" },
+  { name: "Portugal", shortName: "POR", flagCode: "pt" },
+  { name: "Países Bajos", shortName: "NED", flagCode: "nl" },
+  { name: "Bélgica", shortName: "BEL", flagCode: "be" },
+  { name: "Italia", shortName: "ITA", flagCode: "it" },
+  { name: "Suiza", shortName: "SUI", flagCode: "ch" },
+  { name: "Croacia", shortName: "CRO", flagCode: "hr" },
+  { name: "Serbia", shortName: "SRB", flagCode: "rs" },
+  { name: "Polonia", shortName: "POL", flagCode: "pl" },
+  { name: "Austria", shortName: "AUT", flagCode: "at" },
+  { name: "Turquía", shortName: "TUR", flagCode: "tr" },
+  { name: "Escocia", shortName: "SCO", flagCode: "gb-sct" },
+  { name: "Rumania", shortName: "ROU", flagCode: "ro" },
+  { name: "Dinamarca", shortName: "DEN", flagCode: "dk" },
+  { name: "Albania", shortName: "ALB", flagCode: "al" },
+  { name: "Eslovenia", shortName: "SVN", flagCode: "si" },
+  { name: "Eslovaquia", shortName: "SVK", flagCode: "sk" },
+  // CAF
+  { name: "Marruecos", shortName: "MAR", flagCode: "ma" },
+  { name: "Senegal", shortName: "SEN", flagCode: "sn" },
+  { name: "Nigeria", shortName: "NGA", flagCode: "ng" },
+  { name: "Camerún", shortName: "CMR", flagCode: "cm" },
+  { name: "Egipto", shortName: "EGY", flagCode: "eg" },
+  { name: "Congo RD", shortName: "COD", flagCode: "cd" },
+  { name: "Ghana", shortName: "GHA", flagCode: "gh" },
+  { name: "Sudáfrica", shortName: "RSA", flagCode: "za" },
+  { name: "Túnez", shortName: "TUN", flagCode: "tn" },
+  // AFC
+  { name: "Japón", shortName: "JPN", flagCode: "jp" },
+  { name: "Corea del Sur", shortName: "KOR", flagCode: "kr" },
+  { name: "Irán", shortName: "IRN", flagCode: "ir" },
+  { name: "Arabia Saudita", shortName: "KSA", flagCode: "sa" },
+  { name: "Australia", shortName: "AUS", flagCode: "au" },
+  { name: "Qatar", shortName: "QAT", flagCode: "qa" },
+  { name: "Iraq", shortName: "IRQ", flagCode: "iq" },
+  // OFC / Playoffs
+  { name: "Nueva Zelanda", shortName: "NZL", flagCode: "nz" },
 ];
 
 async function main() {
@@ -27,15 +67,12 @@ async function main() {
   await prisma.match.deleteMany({});
   await prisma.fecha.deleteMany({});
   await prisma.user.deleteMany({});
-  await prisma.club.deleteMany({});
+  await prisma.team.deleteMany({});
 
-  console.log("Seeding clubs...");
-  for (const club of clubs) {
-    await prisma.club.create({ data: club });
+  console.log("Seeding teams...");
+  for (const team of teams) {
+    await prisma.team.create({ data: team });
   }
-
-  const firstClub = await prisma.club.findFirst({ orderBy: { id: "asc" } });
-  if (!firstClub) throw new Error("No clubs found after seed");
 
   console.log("Creating admin user...");
   const adminPassword = await bcrypt.hash("admin123", 10);
@@ -44,14 +81,14 @@ async function main() {
     data: {
       username: "admin",
       password: adminPassword,
-      clubId: firstClub.id,
+      favoriteTeamId: null,
       isAdmin: true,
     },
   });
 
   console.log("\n✓ Seed completado.");
   console.log("  Admin: admin / admin123");
-  console.log(`  Clubes cargados: ${clubs.length}`);
+  console.log(`  Equipos cargados: ${teams.length}`);
 }
 
 main()

@@ -27,7 +27,7 @@ export default async function AdminLayout({
         <div className="max-w-5xl mx-auto px-4 flex items-center justify-between h-14">
           <div className="flex items-center gap-6">
             <span className="font-bold text-lg">
-              <span className="text-yellow-400">Admin</span> · URBA Prode
+              <span className="text-yellow-400">Admin</span> · Mundial 2026
             </span>
             <nav className="hidden sm:flex gap-1">
               {links.map((l) => (

@@ -9,8 +9,8 @@ async function requireAdmin() {
 }
 
 // PATCH /api/admin/fechas/[id]
-// Body { isActive } → toggle active (per tira)
-// Body { number, season, tira, deadline } → edit fecha fields
+// Body { isActive } → toggle active (per phase)
+// Body { number, season, phase, deadline } → edit fecha fields
 export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -25,23 +25,23 @@ export async function PATCH(
   if ("isActive" in body) {
     const { isActive } = body;
     if (isActive) {
-      const fecha = await prisma.fecha.findUnique({ where: { id: fechaId }, select: { tira: true } });
+      const fecha = await prisma.fecha.findUnique({ where: { id: fechaId }, select: { phase: true } });
       if (!fecha) return NextResponse.json({ error: "Not found" }, { status: 404 });
       await prisma.$transaction([
-        prisma.fecha.updateMany({ where: { tira: fecha.tira }, data: { isActive: false } }),
+        prisma.fecha.updateMany({ where: { phase: fecha.phase }, data: { isActive: false } }),
         prisma.fecha.update({ where: { id: fechaId }, data: { isActive: true } }),
       ]);
     } else {
       await prisma.fecha.update({ where: { id: fechaId }, data: { isActive: false } });
     }
   } else {
-    const { number, season, tira, deadline } = body;
-    if (!number || !season || !tira) {
+    const { number, season, phase, deadline } = body;
+    if (!number || !season || !phase) {
       return NextResponse.json({ error: "Faltan datos." }, { status: 400 });
     }
     await prisma.fecha.update({
       where: { id: fechaId },
-      data: { number, season, tira, deadline: deadline ? new Date(deadline) : null },
+      data: { number, season, phase, deadline: deadline ? new Date(deadline) : null },
     });
   }
 

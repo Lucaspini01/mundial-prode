@@ -5,8 +5,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Prode URBA Primera A",
-  description: "Predicciones del torneo Primera A de rugby de la URBA",
+  title: "Mundial Prode 2026",
+  description: "Predicciones del Mundial de Fútbol 2026",
 };
 
 export default function RootLayout({

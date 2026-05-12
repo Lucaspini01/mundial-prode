@@ -18,7 +18,7 @@ export function calculatePoints(
 
   // Determinar margen real
   const diff = Math.abs(homeScore - awayScore);
-  const realMargin: Margin = diff > 7 ? "MORE_7" : "LESS_7";
+  const realMargin: Margin = diff > 1 ? "MORE_1" : "LESS_1";
 
   const pickCorrect = pick === realPick;
   const marginCorrect = margin === realMargin;
