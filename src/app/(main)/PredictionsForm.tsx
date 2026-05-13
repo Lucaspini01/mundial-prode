@@ -65,7 +65,9 @@ export default function PredictionsForm({ matches, initialPredictions, deadlineP
   }
 
   const openMatches = matches.filter((m) => !m.isFinished);
-  const predictedCount = openMatches.filter((m) => predictions.some((p) => p.matchId === m.id)).length;
+  const predictedCount = openMatches.filter((m) =>
+    predictions.some((p) => p.matchId === m.id && p.homeGoals !== null && p.awayGoals !== null)
+  ).length;
   const allPredicted = predictedCount === openMatches.length && openMatches.length > 0;
   const progress = openMatches.length > 0 ? (predictedCount / openMatches.length) * 100 : 0;
 

@@ -1,29 +1,15 @@
-import type { Pick, Margin } from "@prisma/client";
-
 export function calculatePoints(
   homeScore: number,
   awayScore: number,
-  pick: Pick,
-  margin: Margin
+  predHome: number,
+  predAway: number
 ): number {
-  // Determinar resultado real
-  let realPick: Pick;
-  if (homeScore > awayScore) {
-    realPick = "HOME";
-  } else if (awayScore > homeScore) {
-    realPick = "AWAY";
-  } else {
-    realPick = "DRAW";
-  }
+  const realWinner = homeScore > awayScore ? "H" : awayScore > homeScore ? "A" : "D";
+  const predWinner = predHome > predAway ? "H" : predAway > predHome ? "A" : "D";
 
-  // Determinar margen real
-  const diff = Math.abs(homeScore - awayScore);
-  const realMargin: Margin = diff > 1 ? "MORE_1" : "LESS_1";
+  if (realWinner !== predWinner) return 0;
 
-  const pickCorrect = pick === realPick;
-  const marginCorrect = margin === realMargin;
-
-  if (pickCorrect && marginCorrect) return 5;
-  if (pickCorrect) return 4;
-  return 0;
+  if (predHome === homeScore && predAway === awayScore) return 10;
+  if (homeScore - awayScore === predHome - predAway) return 7;
+  return 5;
 }

@@ -19,21 +19,21 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Los scores deben ser positivos." }, { status: 400 });
   }
 
-  // Actualizar partido
   await prisma.match.update({
     where: { id: matchId },
     data: { homeScore, awayScore, isFinished: true },
   });
 
-  // Obtener todas las predicciones de este partido
   const predictions = await prisma.prediction.findMany({
     where: { matchId },
   });
 
-  // Calcular y guardar puntos
   let updated = 0;
   for (const pred of predictions) {
-    const points = calculatePoints(homeScore, awayScore, pred.pick, pred.margin);
+    const points =
+      pred.homeGoals !== null && pred.awayGoals !== null
+        ? calculatePoints(homeScore, awayScore, pred.homeGoals, pred.awayGoals)
+        : 0;
     await prisma.prediction.update({
       where: { id: pred.id },
       data: { points },

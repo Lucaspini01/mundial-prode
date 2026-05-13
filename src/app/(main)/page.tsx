@@ -152,8 +152,8 @@ export default async function HomePage({
                     }))}
                     initialPredictions={predictions.map((p) => ({
                       matchId: p.matchId,
-                      pick: p.pick,
-                      margin: p.margin,
+                      homeGoals: p.homeGoals,
+                      awayGoals: p.awayGoals,
                     }))}
                     deadlinePassed={!!deadlinePassed}
                     fechaId={fecha.id}
@@ -274,8 +274,8 @@ export default async function HomePage({
               }))}
               initialPredictions={predictions.map((p) => ({
                 matchId: p.matchId,
-                pick: p.pick,
-                margin: p.margin,
+                homeGoals: p.homeGoals,
+                awayGoals: p.awayGoals,
               }))}
               deadlinePassed={!!deadlinePassed}
               fechaId={fecha.id}

@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
   return NextResponse.json(predictions);
 }
 
-// POST /api/predictions  { predictions: [{matchId, pick, margin}] }
+// POST /api/predictions  { predictions: [{matchId, homeGoals, awayGoals}] }
 export async function POST(req: NextRequest) {
   const session = await auth();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -31,12 +31,14 @@ export async function POST(req: NextRequest) {
   }
 
   const userId = parseInt(session.user.id);
-  const results = [];
+  let saved = 0;
 
   for (const pred of predictions) {
-    const { matchId, pick, margin } = pred;
+    const { matchId, homeGoals, awayGoals } = pred;
 
-    // Validate match exists and is not finished / deadline passed
+    if (typeof homeGoals !== "number" || typeof awayGoals !== "number") continue;
+    if (homeGoals < 0 || awayGoals < 0) continue;
+
     const match = await prisma.match.findUnique({
       where: { id: matchId },
       include: { fecha: true },
@@ -45,14 +47,14 @@ export async function POST(req: NextRequest) {
     if (!match || match.isFinished) continue;
     if (match.fecha.deadline && new Date(match.fecha.deadline) < new Date()) continue;
 
-    const saved = await prisma.prediction.upsert({
+    await prisma.prediction.upsert({
       where: { userId_matchId: { userId, matchId } },
-      update: { pick, margin },
-      create: { userId, matchId, pick, margin },
+      update: { homeGoals, awayGoals },
+      create: { userId, matchId, homeGoals, awayGoals },
     });
 
-    results.push(saved);
+    saved++;
   }
 
-  return NextResponse.json({ saved: results.length });
+  return NextResponse.json({ saved });
 }

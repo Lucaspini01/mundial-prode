@@ -12,50 +12,10 @@ const PHASE_LABELS: Record<string, string> = {
   FINAL: "Final",
 };
 
-function PickBadge({ pick, homeShort, awayShort }: {
-  pick: "HOME" | "AWAY" | "DRAW";
-  homeShort: string;
-  awayShort: string;
-}) {
-  if (pick === "HOME") {
-    return (
-      <span className="inline-flex items-center gap-1 text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded-lg">
-        {homeShort} ←
-      </span>
-    );
-  }
-  if (pick === "AWAY") {
-    return (
-      <span className="inline-flex items-center gap-1 text-xs font-semibold bg-violet-50 text-violet-700 border border-violet-200 px-2 py-0.5 rounded-lg">
-        → {awayShort}
-      </span>
-    );
-  }
-  return (
-    <span className="inline-flex items-center gap-1 text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-200 px-2 py-0.5 rounded-lg">
-      = Empate
-    </span>
-  );
-}
-
-function MarginBadge({ margin }: { margin: "MORE_1" | "LESS_1" }) {
-  if (margin === "MORE_1") {
-    return (
-      <span className="inline-flex items-center text-xs font-medium bg-orange-50 text-orange-700 border border-orange-200 px-2 py-0.5 rounded-lg">
-        2+ goles
-      </span>
-    );
-  }
-  return (
-    <span className="inline-flex items-center text-xs font-medium bg-teal-50 text-teal-700 border border-teal-200 px-2 py-0.5 rounded-lg">
-      ≤ 1 gol
-    </span>
-  );
-}
-
 function PointsBadge({ points }: { points: number }) {
-  if (points === 5) return <span className="font-black text-base text-green-600 tabular-nums">{points}</span>;
-  if (points === 4) return <span className="font-black text-base text-blue-600 tabular-nums">{points}</span>;
+  if (points === 10) return <span className="font-black text-base text-green-500 tabular-nums">{points}</span>;
+  if (points === 7) return <span className="font-black text-base text-emerald-600 tabular-nums">{points}</span>;
+  if (points === 5) return <span className="font-black text-base text-blue-600 tabular-nums">{points}</span>;
   return <span className="font-bold text-base text-slate-300 tabular-nums">{points}</span>;
 }
 
@@ -110,7 +70,6 @@ export default async function HistorialPage() {
 
           return (
             <div key={fecha.id}>
-              {/* Fecha header */}
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <h2 className="text-base font-bold text-slate-700">
@@ -134,7 +93,6 @@ export default async function HistorialPage() {
                 )}
               </div>
 
-              {/* Table */}
               <div className="card overflow-hidden p-0">
                 <table className="w-full text-sm">
                   <thead>
@@ -149,28 +107,28 @@ export default async function HistorialPage() {
                     {preds.map((pred) => {
                       const m = pred.match;
                       const rowBg =
-                        pred.points === 5
+                        pred.points === 10
                           ? "bg-green-50/60"
-                          : pred.points === 4
+                          : pred.points === 7
+                          ? "bg-emerald-50/60"
+                          : pred.points === 5
                           ? "bg-blue-50/60"
                           : pred.points === 0 && pred.points !== null
                           ? "bg-red-50/30"
                           : "";
+
+                      const predScore =
+                        pred.homeGoals !== null && pred.awayGoals !== null
+                          ? `${pred.homeGoals} – ${pred.awayGoals}`
+                          : "—";
 
                       return (
                         <tr key={pred.id} className={`transition-colors hover:bg-slate-50 ${rowBg}`}>
                           <td className="px-4 py-3 font-semibold text-slate-700">
                             {m.homeTeam.shortName} vs {m.awayTeam.shortName}
                           </td>
-                          <td className="px-4 py-3">
-                            <div className="flex items-center gap-1.5 flex-wrap">
-                              <PickBadge
-                                pick={pred.pick}
-                                homeShort={m.homeTeam.shortName}
-                                awayShort={m.awayTeam.shortName}
-                              />
-                              <MarginBadge margin={pred.margin} />
-                            </div>
+                          <td className="px-4 py-3 font-mono text-slate-600 font-semibold">
+                            {predScore}
                           </td>
                           <td className="px-4 py-3 font-mono text-slate-500">
                             {m.isFinished && m.homeScore !== null

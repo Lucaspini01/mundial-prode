@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import TeamFlag from "./TeamFlag";
 
 type Team = { id: number; name: string; shortName: string; flagCode: string | null };
@@ -17,8 +16,8 @@ type Match = {
 
 export type PredictionInput = {
   matchId: number;
-  pick: "HOME" | "AWAY" | "DRAW";
-  margin: "MORE_1" | "LESS_1";
+  homeGoals: number | null;
+  awayGoals: number | null;
 };
 
 type Props = {
@@ -29,15 +28,18 @@ type Props = {
 };
 
 export default function MatchCard({ match, prediction, locked, onChange }: Props) {
-  const pick = prediction?.pick;
-  const margin = prediction?.margin;
+  const homeGoals = prediction?.homeGoals ?? null;
+  const awayGoals = prediction?.awayGoals ?? null;
+  const isPredicted = homeGoals !== null && awayGoals !== null;
 
-  function setPick(p: "HOME" | "AWAY" | "DRAW") {
-    onChange({ matchId: match.id, pick: p, margin: margin ?? "LESS_1" });
+  function setHome(val: string) {
+    const n = val === "" ? null : Math.max(0, Math.min(20, parseInt(val) || 0));
+    onChange({ matchId: match.id, homeGoals: n, awayGoals: awayGoals });
   }
 
-  function setMargin(m: "MORE_1" | "LESS_1") {
-    onChange({ matchId: match.id, pick: pick ?? "HOME", margin: m });
+  function setAway(val: string) {
+    const n = val === "" ? null : Math.max(0, Math.min(20, parseInt(val) || 0));
+    onChange({ matchId: match.id, homeGoals: homeGoals, awayGoals: n });
   }
 
   const date = match.scheduledAt
@@ -49,8 +51,6 @@ export default function MatchCard({ match, prediction, locked, onChange }: Props
         minute: "2-digit",
       })
     : null;
-
-  const isPredicted = pick !== undefined;
 
   return (
     <div
@@ -80,7 +80,7 @@ export default function MatchCard({ match, prediction, locked, onChange }: Props
         ) : null}
       </div>
 
-      {/* Teams */}
+      {/* Teams + score inputs */}
       <div className="flex items-center gap-2">
         <div className="flex-1 flex flex-col items-center gap-1.5">
           <TeamFlag
@@ -95,7 +95,7 @@ export default function MatchCard({ match, prediction, locked, onChange }: Props
           </span>
         </div>
 
-        <div className="flex-shrink-0">
+        <div className="flex-shrink-0 flex flex-col items-center gap-1">
           {match.isFinished && match.homeScore !== null && match.awayScore !== null ? (
             <div className="bg-black/40 rounded-2xl px-4 py-2.5 text-center shadow-md border border-white/10">
               <div className="flex items-center gap-2">
@@ -112,7 +112,48 @@ export default function MatchCard({ match, prediction, locked, onChange }: Props
               </p>
             </div>
           ) : (
-            <span className="text-xs font-black text-slate-700 tracking-widest">VS</span>
+            <div className="flex items-center gap-1.5">
+              <input
+                type="number"
+                min={0}
+                max={20}
+                value={homeGoals ?? ""}
+                onChange={(e) => !locked && setHome(e.target.value)}
+                disabled={locked}
+                placeholder="–"
+                className={`w-10 h-10 text-center text-xl font-black rounded-xl border transition-all
+                  [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none
+                  ${locked
+                    ? "bg-white/[0.04] border-white/10 text-slate-600 cursor-not-allowed"
+                    : homeGoals !== null
+                    ? "bg-green-500/10 border-green-500/40 text-green-300 focus:outline-none focus:border-green-400"
+                    : "bg-black/40 border-white/20 text-white placeholder-slate-700 focus:outline-none focus:border-white/40"
+                  }`}
+              />
+              <span className="text-slate-600 font-bold text-lg leading-none">–</span>
+              <input
+                type="number"
+                min={0}
+                max={20}
+                value={awayGoals ?? ""}
+                onChange={(e) => !locked && setAway(e.target.value)}
+                disabled={locked}
+                placeholder="–"
+                className={`w-10 h-10 text-center text-xl font-black rounded-xl border transition-all
+                  [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none
+                  ${locked
+                    ? "bg-white/[0.04] border-white/10 text-slate-600 cursor-not-allowed"
+                    : awayGoals !== null
+                    ? "bg-green-500/10 border-green-500/40 text-green-300 focus:outline-none focus:border-green-400"
+                    : "bg-black/40 border-white/20 text-white placeholder-slate-700 focus:outline-none focus:border-white/40"
+                  }`}
+              />
+            </div>
+          )}
+          {!match.isFinished && (
+            <p className="text-[9px] text-slate-600 font-medium uppercase tracking-widest">
+              Local · Visit.
+            </p>
           )}
         </div>
 
@@ -127,85 +168,6 @@ export default function MatchCard({ match, prediction, locked, onChange }: Props
           <span className="text-xs font-bold text-slate-300 text-center leading-tight max-w-[60px] truncate">
             {match.awayTeam.shortName}
           </span>
-        </div>
-      </div>
-
-      <div className="border-t border-white/[0.06]" />
-
-      {/* Pick */}
-      <div>
-        <p className="text-[10px] text-slate-500 font-semibold uppercase tracking-wide mb-1.5 text-center">
-          ¿Quién gana?
-        </p>
-        <div className="flex gap-1 p-1 bg-black/30 rounded-xl border border-white/[0.06]">
-          {(["HOME", "DRAW", "AWAY"] as const).map((p) => {
-            const label =
-              p === "HOME"
-                ? match.homeTeam.shortName
-                : p === "AWAY"
-                ? match.awayTeam.shortName
-                : "Empate";
-            const isSelected = pick === p;
-            return (
-              <label
-                key={p}
-                className={`flex-1 text-center text-xs py-2 rounded-lg font-medium transition-all duration-150 ${
-                  locked ? "cursor-not-allowed" : "cursor-pointer"
-                } ${
-                  isSelected
-                    ? "bg-green-500/20 text-green-300 font-bold ring-1 ring-green-500/30"
-                    : "text-slate-500 hover:text-slate-300"
-                }`}
-              >
-                <input
-                  type="radio"
-                  name={`pick-${match.id}`}
-                  value={p}
-                  checked={isSelected}
-                  onChange={() => !locked && setPick(p)}
-                  disabled={locked}
-                  className="sr-only"
-                />
-                {label}
-              </label>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Margin */}
-      <div>
-        <p className="text-[10px] text-slate-500 font-semibold uppercase tracking-wide mb-1.5 text-center">
-          ¿Por cuánto?
-        </p>
-        <div className="flex gap-1 p-1 bg-black/30 rounded-xl border border-white/[0.06]">
-          {(["LESS_1", "MORE_1"] as const).map((m) => {
-            const label = m === "LESS_1" ? "≤ 1 gol" : "2+ goles";
-            const isSelected = margin === m;
-            return (
-              <label
-                key={m}
-                className={`flex-1 text-center text-xs py-2 rounded-lg font-medium transition-all duration-150 ${
-                  locked ? "cursor-not-allowed" : "cursor-pointer"
-                } ${
-                  isSelected
-                    ? "bg-amber-500/20 text-amber-300 font-bold ring-1 ring-amber-500/30"
-                    : "text-slate-500 hover:text-slate-300"
-                }`}
-              >
-                <input
-                  type="radio"
-                  name={`margin-${match.id}`}
-                  value={m}
-                  checked={isSelected}
-                  onChange={() => !locked && setMargin(m)}
-                  disabled={locked}
-                  className="sr-only"
-                />
-                {label}
-              </label>
-            );
-          })}
         </div>
       </div>
 
