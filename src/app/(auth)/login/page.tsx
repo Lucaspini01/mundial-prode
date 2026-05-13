@@ -11,6 +11,11 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const [showHelp, setShowHelp] = useState(false);
+  const [helpEmail, setHelpEmail] = useState("");
+  const [helpMessage, setHelpMessage] = useState("");
+  const [helpStatus, setHelpStatus] = useState<null | "loading" | "success" | "error">(null);
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
@@ -34,6 +39,21 @@ export default function LoginPage() {
     } catch {
       setLoading(false);
       setError("Email o contraseña incorrectos.");
+    }
+  }
+
+  async function handleHelpRequest() {
+    if (!helpEmail) return;
+    setHelpStatus("loading");
+    try {
+      const res = await fetch("/api/auth/support-request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: helpEmail, message: helpMessage }),
+      });
+      setHelpStatus(res.ok ? "success" : "error");
+    } catch {
+      setHelpStatus("error");
     }
   }
 
@@ -116,10 +136,70 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <div className="text-center mt-4">
-            <Link href="/forgot-password" className="text-sm text-green-400 hover:text-green-300 transition-colors">
-              ¿Olvidaste tu contraseña?
-            </Link>
+          {/* Forgot password — hidden, kept for future re-activation */}
+          {false && (
+            <div className="text-center mt-4">
+              <Link href="/forgot-password" className="text-sm text-green-400 hover:text-green-300 transition-colors">
+                ¿Olvidaste tu contraseña?
+              </Link>
+            </div>
+          )}
+
+          {/* Help request section */}
+          <div className="mt-4">
+            {helpStatus === "success" ? (
+              <div className="text-sm text-green-400 bg-green-500/10 border border-green-500/20 p-3 rounded-xl text-center">
+                Solicitud enviada. El administrador se va a contactar con vos.
+              </div>
+            ) : !showHelp ? (
+              <div className="text-center">
+                <button
+                  type="button"
+                  onClick={() => setShowHelp(true)}
+                  className="text-sm text-slate-500 hover:text-slate-300 transition-colors"
+                >
+                  ¿Problemas con tu contraseña?
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <p className="text-xs text-slate-400 text-center">Dejá tu email y el administrador te va a ayudar.</p>
+                <input
+                  className="input text-sm"
+                  type="email"
+                  placeholder="tu@email.com"
+                  value={helpEmail}
+                  onChange={(e) => setHelpEmail(e.target.value)}
+                />
+                <textarea
+                  className="input text-sm resize-none"
+                  placeholder="Mensaje opcional..."
+                  rows={2}
+                  value={helpMessage}
+                  onChange={(e) => setHelpMessage(e.target.value)}
+                />
+                {helpStatus === "error" && (
+                  <p className="text-red-400 text-xs text-center">Error al enviar. Intentá de nuevo.</p>
+                )}
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => { setShowHelp(false); setHelpStatus(null); }}
+                    className="flex-1 py-2 text-xs text-slate-400 hover:text-white transition-colors rounded-lg"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleHelpRequest}
+                    disabled={!helpEmail || helpStatus === "loading"}
+                    className="flex-1 py-2 bg-slate-700 hover:bg-slate-600 text-white text-xs font-bold rounded-lg transition-colors disabled:opacity-50"
+                  >
+                    {helpStatus === "loading" ? "Enviando..." : "Enviar solicitud"}
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
 
           <p className="text-center text-sm text-slate-500 mt-4">

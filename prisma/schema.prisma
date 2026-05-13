@@ -81,6 +81,14 @@ model Prediction {
   @@unique([userId, matchId])
 }
 
+model SupportRequest {
+  id         Int      @id @default(autoincrement())
+  email      String
+  message    String?
+  isResolved Boolean  @default(false)
+  createdAt  DateTime @default(now())
+}
+
 enum Phase {
   GRUPOS
   OCTAVOS
