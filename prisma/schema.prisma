@@ -91,6 +91,7 @@ model SupportRequest {
 
 enum Phase {
   GRUPOS
+  DIECISEISAVOS
   OCTAVOS
   CUARTOS
   SEMIFINAL

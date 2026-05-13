@@ -4,9 +4,10 @@ import { Phase } from "@prisma/client";
 import Link from "next/link";
 import PredictionsForm from "./PredictionsForm";
 
-const PHASES: Phase[] = ["GRUPOS", "OCTAVOS", "CUARTOS", "SEMIFINAL", "TERCER_PUESTO", "FINAL"];
+const PHASES: Phase[] = ["GRUPOS", "DIECISEISAVOS", "OCTAVOS", "CUARTOS", "SEMIFINAL", "TERCER_PUESTO", "FINAL"];
 const PHASE_LABELS: Record<Phase, string> = {
   GRUPOS: "Grupos",
+  DIECISEISAVOS: "16avos",
   OCTAVOS: "Octavos",
   CUARTOS: "Cuartos",
   SEMIFINAL: "Semifinal",

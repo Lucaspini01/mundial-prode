@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 
 const PHASE_LABELS: Record<string, string> = {
-  GRUPOS: "Grupos", OCTAVOS: "Octavos", CUARTOS: "Cuartos",
+  GRUPOS: "Grupos", DIECISEISAVOS: "16avos", OCTAVOS: "Octavos", CUARTOS: "Cuartos",
   SEMIFINAL: "Semifinal", TERCER_PUESTO: "3er Puesto", FINAL: "Final",
 };
 

@@ -5,8 +5,9 @@ export const dynamic = "force-dynamic";
 
 const PHASE_LABELS: Record<string, string> = {
   GRUPOS: "Grupos",
-  OCTAVOS: "Octavos",
-  CUARTOS: "Cuartos",
+  DIECISEISAVOS: "16avos de Final",
+  OCTAVOS: "Octavos de Final",
+  CUARTOS: "Cuartos de Final",
   SEMIFINAL: "Semifinal",
   TERCER_PUESTO: "3er Puesto",
   FINAL: "Final",

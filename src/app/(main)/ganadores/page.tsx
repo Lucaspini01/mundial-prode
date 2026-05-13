@@ -3,6 +3,7 @@ import TeamFlag from "@/components/TeamFlag";
 
 const PHASE_LABELS: Record<string, string> = {
   GRUPOS: "Fase de Grupos",
+  DIECISEISAVOS: "16avos de Final",
   OCTAVOS: "Octavos de Final",
   CUARTOS: "Cuartos de Final",
   SEMIFINAL: "Semifinales",

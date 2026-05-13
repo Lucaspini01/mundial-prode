@@ -19,13 +19,14 @@ function utcToARInputs(utc: string): { date: string; time: string } {
   return { date, time };
 }
 
-const PHASES = ["GRUPOS", "OCTAVOS", "CUARTOS", "SEMIFINAL", "TERCER_PUESTO", "FINAL"] as const;
+const PHASES = ["GRUPOS", "DIECISEISAVOS", "OCTAVOS", "CUARTOS", "SEMIFINAL", "TERCER_PUESTO", "FINAL"] as const;
 type PhaseKey = (typeof PHASES)[number];
 
 const PHASE_LABELS: Record<PhaseKey, string> = {
   GRUPOS: "Grupos",
-  OCTAVOS: "Octavos",
-  CUARTOS: "Cuartos",
+  DIECISEISAVOS: "16avos de Final",
+  OCTAVOS: "Octavos de Final",
+  CUARTOS: "Cuartos de Final",
   SEMIFINAL: "Semifinal",
   TERCER_PUESTO: "3er Puesto",
   FINAL: "Final",
