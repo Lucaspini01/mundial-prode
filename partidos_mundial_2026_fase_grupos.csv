@@ -1,0 +1,73 @@
+partido_id,grupo,jornada,fecha_iso,fecha_txt,dia_semana,horario_et,horario_cdmx,horario_ar,horario_col,equipo_local,equipo_visitante,sede,estadio,confederacion_local,confederacion_visitante
+1,A,1,2026-06-11,11 junio,jueves,15:00,14:00,16:00,15:00,México,Sudáfrica,Ciudad de México,Estadio Azteca,CONCACAF,CAF
+2,A,1,2026-06-11,11 junio,jueves,22:00,21:00,23:00,22:00,Corea del Sur,Chequia,Guadalajara,Estadio Akron,AFC,UEFA
+3,B,1,2026-06-12,12 junio,viernes,15:00,14:00,16:00,15:00,Canadá,Bosnia y Herzegovina,Toronto,BMO Field,CONCACAF,UEFA
+4,B,1,2026-06-13,13 junio,sábado,15:00,14:00,16:00,15:00,Qatar,Suiza,Los Ángeles,LA Stadium,AFC,UEFA
+5,C,1,2026-06-13,13 junio,sábado,18:00,17:00,19:00,18:00,Brasil,Marruecos,Orlando,Exploria Stadium,CONMEBOL,CAF
+6,C,1,2026-06-13,13 junio,sábado,21:00,20:00,22:00,21:00,Haití,Escocia,Boston,Gillette Stadium,CONCACAF,UEFA
+7,D,1,2026-06-12,12 junio,viernes,21:00,20:00,22:00,21:00,Estados Unidos,Paraguay,Dallas,AT&T Stadium,CONCACAF,CONMEBOL
+8,D,1,2026-06-13,13 junio,sábado,00:00,23:00,01:00,00:00,Australia,Turquía,San Francisco,Levi's Stadium,AFC,UEFA
+9,A,2,2026-06-18,18 junio,jueves,12:00,11:00,13:00,12:00,Chequia,Sudáfrica,Atlanta,Mercedes-Benz Stadium,UEFA,CAF
+10,A,2,2026-06-18,18 junio,jueves,21:00,20:00,22:00,21:00,México,Corea del Sur,Guadalajara,Estadio Akron,CONCACAF,AFC
+11,B,2,2026-06-18,18 junio,jueves,15:00,14:00,16:00,15:00,Suiza,Bosnia y Herzegovina,Los Ángeles,LA Stadium,UEFA,UEFA
+12,B,2,2026-06-18,18 junio,jueves,18:00,17:00,19:00,18:00,Canadá,Qatar,Vancouver,BC Stadium,CONCACAF,AFC
+13,C,2,2026-06-19,19 junio,viernes,18:00,17:00,19:00,18:00,Escocia,Marruecos,Boston,Gillette Stadium,UEFA,CAF
+14,C,2,2026-06-19,19 junio,viernes,21:00,20:00,22:00,21:00,Brasil,Haití,Filadelfia,Lincoln Financial Field,CONMEBOL,CONCACAF
+15,D,2,2026-06-19,19 junio,viernes,15:00,14:00,16:00,15:00,Estados Unidos,Australia,Seattle,Lumen Field,CONCACAF,AFC
+16,D,2,2026-06-19,19 junio,viernes,00:00,23:00,01:00,00:00,Turquía,Paraguay,San Francisco,Levi's Stadium,UEFA,CONMEBOL
+17,E,1,2026-06-14,14 junio,domingo,13:00,12:00,14:00,13:00,Alemania,Curazao,Miami,Hard Rock Stadium,UEFA,CONCACAF
+18,E,1,2026-06-14,14 junio,domingo,19:00,18:00,20:00,19:00,Costa de Marfil,Ecuador,Houston,NRG Stadium,CAF,CONMEBOL
+19,E,2,2026-06-20,20 junio,sábado,16:00,15:00,17:00,16:00,Alemania,Costa de Marfil,Miami,Hard Rock Stadium,UEFA,CAF
+20,E,2,2026-06-20,20 junio,sábado,20:00,19:00,21:00,20:00,Ecuador,Curazao,Phoenix,Arizona Stadium,CONMEBOL,CONCACAF
+21,F,1,2026-06-14,14 junio,domingo,16:00,15:00,17:00,16:00,Países Bajos,Japón,Nueva York,MetLife Stadium,UEFA,AFC
+22,F,1,2026-06-14,14 junio,domingo,22:00,21:00,23:00,22:00,Suecia,Túnez,San Francisco,Levi's Stadium,UEFA,CAF
+23,F,2,2026-06-20,20 junio,sábado,13:00,12:00,14:00,13:00,Países Bajos,Suecia,Nueva York,MetLife Stadium,UEFA,UEFA
+24,F,2,2026-06-20,20 junio,sábado,00:00,23:00,01:00,00:00,Túnez,Japón,San Francisco,Levi's Stadium,CAF,AFC
+25,G,1,2026-06-15,15 junio,lunes,15:00,14:00,16:00,15:00,Bélgica,Egipto,Denver,Empower Field,UEFA,CAF
+26,G,1,2026-06-15,15 junio,lunes,21:00,20:00,22:00,21:00,Irán,Nueva Zelanda,Kansas City,Arrowhead Stadium,AFC,OFC
+27,G,2,2026-06-21,21 junio,domingo,15:00,14:00,16:00,15:00,Bélgica,Irán,Denver,Empower Field,UEFA,AFC
+28,G,2,2026-06-21,21 junio,domingo,21:00,20:00,22:00,21:00,Nueva Zelanda,Egipto,Kansas City,Arrowhead Stadium,OFC,CAF
+29,H,1,2026-06-15,15 junio,lunes,12:00,11:00,13:00,12:00,España,Cabo Verde,Boston,Gillette Stadium,UEFA,CAF
+30,H,1,2026-06-15,15 junio,lunes,18:00,17:00,19:00,18:00,Arabia Saudita,Uruguay,Washington DC,RFK Stadium,AFC,CONMEBOL
+31,H,2,2026-06-21,21 junio,domingo,12:00,11:00,13:00,12:00,España,Arabia Saudita,Boston,Gillette Stadium,UEFA,AFC
+32,H,2,2026-06-21,21 junio,domingo,18:00,17:00,19:00,18:00,Uruguay,Cabo Verde,Washington DC,RFK Stadium,CONMEBOL,CAF
+33,A,3,2026-06-24,24 junio,miércoles,21:00,20:00,22:00,21:00,Chequia,México,Ciudad de México,Estadio Azteca,UEFA,CONCACAF
+34,A,3,2026-06-24,24 junio,miércoles,21:00,20:00,22:00,21:00,Sudáfrica,Corea del Sur,Monterrey,Estadio BBVA,CAF,AFC
+35,B,3,2026-06-24,24 junio,miércoles,15:00,14:00,16:00,15:00,Suiza,Canadá,Los Ángeles,LA Stadium,UEFA,CONCACAF
+36,B,3,2026-06-24,24 junio,miércoles,15:00,14:00,16:00,15:00,Bosnia y Herzegovina,Qatar,Vancouver,BC Stadium,UEFA,AFC
+37,C,3,2026-06-24,24 junio,miércoles,18:00,17:00,19:00,18:00,Escocia,Brasil,Boston,Gillette Stadium,UEFA,CONMEBOL
+38,C,3,2026-06-24,24 junio,miércoles,18:00,17:00,19:00,18:00,Marruecos,Haití,Orlando,Exploria Stadium,CAF,CONCACAF
+39,D,3,2026-06-25,25 junio,jueves,22:00,21:00,23:00,22:00,Turquía,Estados Unidos,Nueva York,MetLife Stadium,UEFA,CONCACAF
+40,D,3,2026-06-25,25 junio,jueves,22:00,21:00,23:00,22:00,Paraguay,Australia,Los Ángeles,SoFi Stadium,CONMEBOL,AFC
+41,E,3,2026-06-25,25 junio,jueves,16:00,15:00,17:00,16:00,Ecuador,Alemania,Houston,NRG Stadium,CONMEBOL,UEFA
+42,E,3,2026-06-25,25 junio,jueves,16:00,15:00,17:00,16:00,Curazao,Costa de Marfil,Miami,Hard Rock Stadium,CONCACAF,CAF
+43,F,3,2026-06-25,25 junio,jueves,19:00,18:00,20:00,19:00,Japón,Suecia,Los Ángeles,SoFi Stadium,AFC,UEFA
+44,F,3,2026-06-25,25 junio,jueves,19:00,18:00,20:00,19:00,Túnez,Países Bajos,Nueva York,MetLife Stadium,CAF,UEFA
+45,G,3,2026-06-26,26 junio,viernes,23:00,22:00,00:00,23:00,Egipto,Irán,Denver,Empower Field,CAF,AFC
+46,G,3,2026-06-26,26 junio,viernes,23:00,22:00,00:00,23:00,Nueva Zelanda,Bélgica,Kansas City,Arrowhead Stadium,OFC,UEFA
+47,H,3,2026-06-26,26 junio,viernes,20:00,19:00,21:00,20:00,Cabo Verde,Arabia Saudita,Boston,Gillette Stadium,CAF,AFC
+48,H,3,2026-06-26,26 junio,viernes,20:00,19:00,21:00,20:00,Uruguay,España,Washington DC,RFK Stadium,CONMEBOL,UEFA
+49,I,1,2026-06-16,16 junio,martes,15:00,14:00,16:00,15:00,Francia,Senegal,Toronto,BMO Field,UEFA,CAF
+50,I,1,2026-06-16,16 junio,martes,18:00,17:00,19:00,18:00,Iraq,Noruega,Vancouver,BC Stadium,AFC,UEFA
+51,I,2,2026-06-22,22 junio,lunes,17:00,16:00,18:00,17:00,Francia,Iraq,Toronto,BMO Field,UEFA,AFC
+52,I,2,2026-06-22,22 junio,lunes,20:00,19:00,21:00,20:00,Noruega,Senegal,Vancouver,BC Stadium,UEFA,CAF
+53,I,3,2026-06-26,26 junio,viernes,15:00,14:00,16:00,15:00,Noruega,Francia,Toronto,BMO Field,UEFA,UEFA
+54,I,3,2026-06-26,26 junio,viernes,15:00,14:00,16:00,15:00,Senegal,Iraq,Vancouver,BC Stadium,CAF,AFC
+55,J,1,2026-06-16,16 junio,martes,21:00,20:00,22:00,21:00,Argentina,Argelia,Nueva York,MetLife Stadium,CONMEBOL,CAF
+56,J,1,2026-06-16,16 junio,martes,00:00,23:00,01:00,00:00,Austria,Jordania,San Francisco,Levi's Stadium,UEFA,AFC
+57,J,2,2026-06-22,22 junio,lunes,13:00,12:00,14:00,13:00,Argentina,Austria,Nueva York,MetLife Stadium,CONMEBOL,UEFA
+58,J,2,2026-06-22,22 junio,lunes,23:00,22:00,00:00,23:00,Jordania,Argelia,San Francisco,Levi's Stadium,AFC,CAF
+59,J,3,2026-06-27,27 junio,sábado,22:00,21:00,23:00,22:00,Argelia,Austria,Nueva York,MetLife Stadium,CAF,UEFA
+60,J,3,2026-06-27,27 junio,sábado,22:00,21:00,23:00,22:00,Jordania,Argentina,San Francisco,Levi's Stadium,AFC,CONMEBOL
+61,K,1,2026-06-17,17 junio,miércoles,13:00,12:00,14:00,13:00,Portugal,DR Congo,Houston,NRG Stadium,UEFA,CAF
+62,K,1,2026-06-17,17 junio,miércoles,22:00,21:00,23:00,22:00,Uzbekistán,Colombia,Los Ángeles,SoFi Stadium,AFC,CONMEBOL
+63,K,2,2026-06-23,23 junio,domingo,13:00,12:00,14:00,13:00,Portugal,Uzbekistán,Houston,NRG Stadium,UEFA,AFC
+64,K,2,2026-06-23,23 junio,domingo,22:00,21:00,23:00,22:00,Colombia,DR Congo,Los Ángeles,SoFi Stadium,CONMEBOL,CAF
+65,K,3,2026-06-27,27 junio,sábado,19:30,18:30,20:30,19:30,Colombia,Portugal,Miami,Hard Rock Stadium,CONMEBOL,UEFA
+66,K,3,2026-06-27,27 junio,sábado,19:30,18:30,20:30,19:30,DR Congo,Uzbekistán,Los Ángeles,SoFi Stadium,CAF,AFC
+67,L,1,2026-06-17,17 junio,miércoles,16:00,15:00,17:00,16:00,Inglaterra,Croacia,Dallas,AT&T Stadium,UEFA,UEFA
+68,L,1,2026-06-17,17 junio,miércoles,19:00,18:00,20:00,19:00,Ghana,Panamá,Toronto,BMO Field,CAF,CONCACAF
+69,L,2,2026-06-23,23 junio,domingo,16:00,15:00,17:00,16:00,Inglaterra,Ghana,Dallas,AT&T Stadium,UEFA,CAF
+70,L,2,2026-06-23,23 junio,domingo,19:00,18:00,20:00,19:00,Panamá,Croacia,Toronto,BMO Field,CONCACAF,UEFA
+71,L,3,2026-06-27,27 junio,sábado,17:00,16:00,18:00,17:00,Panamá,Inglaterra,Toronto,BMO Field,CONCACAF,UEFA
+72,L,3,2026-06-27,27 junio,sábado,17:00,16:00,18:00,17:00,Croacia,Ghana,Dallas,AT&T Stadium,UEFA,CAF

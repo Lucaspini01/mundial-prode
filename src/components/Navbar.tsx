@@ -20,7 +20,6 @@ export default function Navbar({ username, favoriteTeamFlag, favoriteTeamShort, 
     { href: "/ranking", label: "Ranking" },
     { href: "/ganadores", label: "Ganadores" },
     { href: "/historial", label: "Historial" },
-    { href: "/selecciones", label: "Selecciones" },
   ];
 
   const isActive = (href: string) =>

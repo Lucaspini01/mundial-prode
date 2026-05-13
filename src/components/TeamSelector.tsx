@@ -22,7 +22,7 @@ export default function TeamSelector({ teams, selected, onSelect }: Props) {
             : "border-white/10 bg-white/[0.03] text-slate-500 hover:border-white/20 hover:text-slate-400"
         }`}
       >
-        Sin equipo favorito
+        Sin predicción
       </button>
 
       <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2">

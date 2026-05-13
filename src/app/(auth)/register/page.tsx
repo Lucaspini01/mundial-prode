@@ -160,7 +160,7 @@ export default function RegisterPage() {
               <div className="flex items-center gap-2 mb-4">
                 <span className="flex items-center justify-center w-5 h-5 rounded-full bg-green-600 text-white text-xs font-black">2</span>
                 <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-                  Equipo favorito <span className="normal-case font-normal text-slate-500">(opcional)</span>
+                  ¿Para vos quién sale campeón?
                 </h2>
               </div>
               <TeamSelector teams={teams} selected={favoriteTeamId} onSelect={setFavoriteTeamId} />
