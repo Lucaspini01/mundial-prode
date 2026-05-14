@@ -19,27 +19,25 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Los scores deben ser positivos." }, { status: 400 });
   }
 
-  await prisma.match.update({
-    where: { id: matchId },
-    data: { homeScore, awayScore, isFinished: true },
-  });
-
   const predictions = await prisma.prediction.findMany({
     where: { matchId },
   });
 
-  let updated = 0;
-  for (const pred of predictions) {
+  const predUpdates = predictions.map((pred) => {
     const points =
       pred.homeGoals !== null && pred.awayGoals !== null
         ? calculatePoints(homeScore, awayScore, pred.homeGoals, pred.awayGoals)
         : 0;
-    await prisma.prediction.update({
-      where: { id: pred.id },
-      data: { points },
-    });
-    updated++;
-  }
+    return prisma.prediction.update({ where: { id: pred.id }, data: { points } });
+  });
 
-  return NextResponse.json({ ok: true, updated });
+  await prisma.$transaction([
+    prisma.match.update({
+      where: { id: matchId },
+      data: { homeScore, awayScore, isFinished: true },
+    }),
+    ...predUpdates,
+  ]);
+
+  return NextResponse.json({ ok: true, updated: predictions.length });
 }

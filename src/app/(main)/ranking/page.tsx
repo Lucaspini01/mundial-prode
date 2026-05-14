@@ -19,7 +19,7 @@ export default async function RankingPage({
   });
 
   const users = await prisma.user.findMany({
-    where: { isAdmin: false },
+    where: { isAdmin: false, isApproved: true },
     include: { favoriteTeam: true },
   });
 

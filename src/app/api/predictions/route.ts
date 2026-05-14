@@ -24,6 +24,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   const session = await auth();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session.user.isApproved) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   const { predictions } = await req.json();
   if (!Array.isArray(predictions) || predictions.length === 0) {

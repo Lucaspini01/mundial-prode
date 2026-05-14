@@ -11,7 +11,8 @@
     "db:seed-teams": "ts-node --project tsconfig.seed.json scripts/seed-teams.ts",
     "db:import": "ts-node --project tsconfig.seed.json scripts/import-fixtures.ts",
     "db:seed-fixtures": "ts-node --project tsconfig.seed.json scripts/seed-fixtures.ts",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "test:prode": "ts-node --project tsconfig.seed.json scripts/test-prode.ts"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",
