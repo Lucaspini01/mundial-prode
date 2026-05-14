@@ -9,6 +9,7 @@ type User = {
   username: string;
   isAdmin: boolean;
   isApproved: boolean;
+  hasPaid: boolean;
   createdAt: string;
   favoriteTeam: { flagCode: string | null; shortName: string | null; name: string } | null;
 };
@@ -246,6 +247,15 @@ export default function UsuariosPage() {
                             APROBADO
                           </span>
                         )}
+                        {user.hasPaid ? (
+                          <span className="text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 px-1.5 py-0.5 rounded">
+                            PAGÓ ✓
+                          </span>
+                        ) : (
+                          <span className="text-[10px] font-bold bg-red-500/15 text-red-400 border border-red-500/30 px-1.5 py-0.5 rounded">
+                            SIN PAGAR
+                          </span>
+                        )}
                       </div>
                       <p className="text-slate-400 text-xs truncate">{user.email}</p>
                       <p className="text-slate-600 text-xs">
@@ -292,6 +302,17 @@ export default function UsuariosPage() {
                           </button>
                         </>
                       )}
+                      <button
+                        onClick={() => patch(user.id, { hasPaid: !user.hasPaid })}
+                        disabled={actionLoading === user.id}
+                        className={`px-3 py-1.5 text-xs font-bold rounded-lg border transition-colors disabled:opacity-50 ${
+                          user.hasPaid
+                            ? "bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border-emerald-500/30"
+                            : "bg-red-500/15 hover:bg-red-500/25 text-red-400 border-red-500/20"
+                        }`}
+                      >
+                        {user.hasPaid ? "✓ Pagó" : "✗ Sin pagar"}
+                      </button>
                       <button
                         onClick={() => {
                           setResetUserId(resetUserId === user.id ? null : user.id);

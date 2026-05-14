@@ -20,6 +20,7 @@ export async function GET() {
       username: true,
       isAdmin: true,
       isApproved: true,
+      hasPaid: true,
       createdAt: true,
       favoriteTeam: { select: { flagCode: true, shortName: true, name: true } },
     },

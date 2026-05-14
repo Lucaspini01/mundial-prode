@@ -20,9 +20,10 @@ export async function PATCH(
   if (isNaN(userId)) return NextResponse.json({ error: "ID inválido." }, { status: 400 });
 
   const body = await req.json();
-  const data: { isApproved?: boolean; isAdmin?: boolean } = {};
+  const data: { isApproved?: boolean; isAdmin?: boolean; hasPaid?: boolean } = {};
   if (typeof body.isApproved === "boolean") data.isApproved = body.isApproved;
   if (typeof body.isAdmin === "boolean") data.isAdmin = body.isAdmin;
+  if (typeof body.hasPaid === "boolean") data.hasPaid = body.hasPaid;
 
   if (Object.keys(data).length === 0) {
     return NextResponse.json({ error: "Sin cambios." }, { status: 400 });
