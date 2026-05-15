@@ -142,6 +142,7 @@ export default async function HomePage({
                   </div>
                 ) : (
                   <PredictionsForm
+                    key={fecha.id}
                     matches={fecha.matches.map((m) => ({
                       id: m.id,
                       homeTeam: m.homeTeam,
@@ -264,6 +265,7 @@ export default async function HomePage({
             </div>
           ) : (
             <PredictionsForm
+              key={fecha.id}
               matches={fecha.matches.map((m) => ({
                 id: m.id,
                 homeTeam: m.homeTeam,
