@@ -10,6 +10,7 @@ export default function RegisterPage() {
   const [teams, setTeams] = useState<Team[]>([]);
   const [form, setForm] = useState({ email: "", username: "", password: "", confirmPassword: "" });
   const [favoriteTeamId, setFavoriteTeamId] = useState<number | null>(null);
+  const [invitedBy, setInvitedBy] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [registered, setRegistered] = useState(false);
@@ -32,7 +33,7 @@ export default function RegisterPage() {
     const res = await fetch("/api/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: form.email, username: form.username, password: form.password, favoriteTeamId }),
+      body: JSON.stringify({ email: form.email, username: form.username, password: form.password, favoriteTeamId, invitedBy }),
     });
 
     const data = await res.json();
@@ -164,6 +165,23 @@ export default function RegisterPage() {
                 </h2>
               </div>
               <TeamSelector teams={teams} selected={favoriteTeamId} onSelect={setFavoriteTeamId} />
+            </div>
+
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <span className="flex items-center justify-center w-5 h-5 rounded-full bg-green-600 text-white text-xs font-black">3</span>
+                <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+                  ¿Quién te invitó?
+                </h2>
+              </div>
+              <input
+                className="input w-full"
+                type="text"
+                placeholder="Nombre de quien te recomendó (opcional)"
+                value={invitedBy}
+                onChange={(e) => setInvitedBy(e.target.value)}
+                maxLength={100}
+              />
             </div>
 
             {error && (

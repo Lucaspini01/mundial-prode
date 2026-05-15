@@ -21,6 +21,7 @@ export async function GET() {
       isAdmin: true,
       isApproved: true,
       hasPaid: true,
+      invitedBy: true,
       createdAt: true,
       favoriteTeam: { select: { flagCode: true, shortName: true, name: true } },
     },

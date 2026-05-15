@@ -10,6 +10,7 @@ type User = {
   isAdmin: boolean;
   isApproved: boolean;
   hasPaid: boolean;
+  invitedBy: string | null;
   createdAt: string;
   favoriteTeam: { flagCode: string | null; shortName: string | null; name: string } | null;
 };
@@ -258,6 +259,11 @@ export default function UsuariosPage() {
                         )}
                       </div>
                       <p className="text-slate-400 text-xs truncate">{user.email}</p>
+                      {user.invitedBy && (
+                        <p className="text-slate-500 text-xs">
+                          Invitado por: <span className="text-slate-400">{user.invitedBy}</span>
+                        </p>
+                      )}
                       <p className="text-slate-600 text-xs">
                         {new Date(user.createdAt).toLocaleDateString("es-AR", {
                           day: "2-digit", month: "short", year: "numeric",

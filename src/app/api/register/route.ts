@@ -3,7 +3,7 @@ import { prisma } from "@/lib/db";
 import bcrypt from "bcryptjs";
 
 export async function POST(req: NextRequest) {
-  const { email, username, password, favoriteTeamId } = await req.json();
+  const { email, username, password, favoriteTeamId, invitedBy } = await req.json();
 
   if (!email || !username || !password) {
     return NextResponse.json({ error: "Faltan datos." }, { status: 400 });
@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
   const hashed = await bcrypt.hash(password, 10);
 
   const user = await prisma.user.create({
-    data: { email, username, password: hashed, favoriteTeamId: favoriteTeamId ?? null },
+    data: { email, username, password: hashed, favoriteTeamId: favoriteTeamId ?? null, invitedBy: invitedBy?.trim() || null },
   });
 
   return NextResponse.json({ id: user.id }, { status: 201 });
