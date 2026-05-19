@@ -1,0 +1,183 @@
+{
+  "name": "Backup Manual Prode - Neon to Google Sheets",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "b1000000-0000-0000-0000-000000000001",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "set-sheet-name",
+              "name": "sheetName",
+              "value": "=Backup_{{ $now.toFormat('yyyy-MM-dd_HH-mm') }}",
+              "type": "string"
+            },
+            {
+              "id": "set-spreadsheet-id",
+              "name": "spreadsheetId",
+              "value": "REEMPLAZAR_CON_SPREADSHEET_ID",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b1000000-0000-0000-0000-000000000002",
+      "name": "Set: Backup Metadata",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT json_build_object(\n  'users', COALESCE((\n    SELECT json_agg(row_to_json(u))\n    FROM (\n      SELECT id, email, username, \"favoriteTeamId\", \"isAdmin\",\n             \"isApproved\", \"hasPaid\", \"invitedBy\", \"createdAt\"\n      FROM \"User\" ORDER BY id\n    ) u\n  ), '[]'::json),\n  'predictions', COALESCE((\n    SELECT json_agg(row_to_json(p))\n    FROM (\n      SELECT id, \"userId\", \"matchId\", \"homeGoals\", \"awayGoals\",\n             points, \"createdAt\", \"updatedAt\"\n      FROM \"Prediction\" ORDER BY id\n    ) p\n  ), '[]'::json),\n  'matches', COALESCE((\n    SELECT json_agg(row_to_json(m))\n    FROM (\n      SELECT id, \"fechaId\", \"homeTeamId\", \"awayTeamId\", \"scheduledAt\",\n             \"homeScore\", \"awayScore\", \"isFinished\"\n      FROM \"Match\" ORDER BY id\n    ) m\n  ), '[]'::json),\n  'fechas', COALESCE((\n    SELECT json_agg(row_to_json(f))\n    FROM (\n      SELECT id, number, season, phase, \"isActive\", deadline\n      FROM \"Fecha\" ORDER BY id\n    ) f\n  ), '[]'::json),\n  'support_requests', COALESCE((\n    SELECT json_agg(row_to_json(s))\n    FROM (\n      SELECT id, email, message, \"isResolved\", \"createdAt\"\n      FROM \"SupportRequest\" ORDER BY id\n    ) s\n  ), '[]'::json)\n) AS backup;",
+        "options": {}
+      },
+      "id": "b1000000-0000-0000-0000-000000000003",
+      "name": "Postgres: Dump All Tables",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const data = $input.first().json.backup;\nconst meta = $('Set: Backup Metadata').first().json;\n\nconst matrix = [];\n\nconst addTable = (label, rows, columns) => {\n  const r = rows || [];\n  matrix.push([`=== ${label.toUpperCase()} (${r.length} filas) ===`]);\n  matrix.push(columns);\n  for (const row of r) {\n    matrix.push(columns.map(c => {\n      const v = row[c];\n      if (v === null || v === undefined) return \"\";\n      if (typeof v === \"object\") return JSON.stringify(v);\n      return v;\n    }));\n  }\n  matrix.push([]);\n};\n\naddTable(\"Users\", data.users,\n  [\"id\", \"email\", \"username\", \"favoriteTeamId\", \"isAdmin\",\n   \"isApproved\", \"hasPaid\", \"invitedBy\", \"createdAt\"]);\naddTable(\"Predictions\", data.predictions,\n  [\"id\", \"userId\", \"matchId\", \"homeGoals\", \"awayGoals\",\n   \"points\", \"createdAt\", \"updatedAt\"]);\naddTable(\"Matches\", data.matches,\n  [\"id\", \"fechaId\", \"homeTeamId\", \"awayTeamId\", \"scheduledAt\",\n   \"homeScore\", \"awayScore\", \"isFinished\"]);\naddTable(\"Fechas\", data.fechas,\n  [\"id\", \"number\", \"season\", \"phase\", \"isActive\", \"deadline\"]);\naddTable(\"Support Requests\", data.support_requests,\n  [\"id\", \"email\", \"message\", \"isResolved\", \"createdAt\"]);\n\nreturn [{\n  json: {\n    sheetName: meta.sheetName,\n    spreadsheetId: meta.spreadsheetId,\n    values: matrix,\n    rowCount: matrix.length,\n  },\n}];"
+      },
+      "id": "b1000000-0000-0000-0000-000000000004",
+      "name": "Code: Build 2D Matrix",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://sheets.googleapis.com/v4/spreadsheets/{{ $json.spreadsheetId }}:batchUpdate",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "sendBody": true,
+        "contentType": "json",
+        "specifyBody": "json",
+        "jsonBody": "={{ { requests: [{ addSheet: { properties: { title: $json.sheetName } } }] } }}",
+        "options": {}
+      },
+      "id": "b1000000-0000-0000-0000-000000000005",
+      "name": "HTTP: Add Sheet Tab",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1120, 300]
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://sheets.googleapis.com/v4/spreadsheets/{{ $('Code: Build 2D Matrix').first().json.spreadsheetId }}/values/{{ encodeURIComponent($('Code: Build 2D Matrix').first().json.sheetName) }}!A1?valueInputOption=USER_ENTERED",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "sendBody": true,
+        "contentType": "json",
+        "specifyBody": "json",
+        "jsonBody": "={{ { values: $('Code: Build 2D Matrix').first().json.values } }}",
+        "options": {}
+      },
+      "id": "b1000000-0000-0000-0000-000000000006",
+      "name": "HTTP: Write Values",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1340, 300]
+    },
+    {
+      "parameters": {},
+      "id": "b1000000-0000-0000-0000-000000000007",
+      "name": "Done",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [1560, 300]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Set: Backup Metadata",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set: Backup Metadata": {
+      "main": [
+        [
+          {
+            "node": "Postgres: Dump All Tables",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres: Dump All Tables": {
+      "main": [
+        [
+          {
+            "node": "Code: Build 2D Matrix",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code: Build 2D Matrix": {
+      "main": [
+        [
+          {
+            "node": "HTTP: Add Sheet Tab",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP: Add Sheet Tab": {
+      "main": [
+        [
+          {
+            "node": "HTTP: Write Values",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP: Write Values": {
+      "main": [
+        [
+          {
+            "node": "Done",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "instanceId": "mundial-prode-backup"
+  },
+  "tags": []
+}
