@@ -4,13 +4,17 @@ import { sendPasswordResetEmail } from "@/lib/email";
 import crypto from "crypto";
 
 export async function POST(req: NextRequest) {
-  const { email } = await req.json();
+  const { email: rawEmail } = await req.json();
 
-  if (!email) {
+  if (!rawEmail) {
     return NextResponse.json({ error: "Falta el email." }, { status: 400 });
   }
 
-  const user = await prisma.user.findUnique({ where: { email } });
+  const email = String(rawEmail).trim().toLowerCase();
+
+  const user = await prisma.user.findFirst({
+    where: { email: { equals: email, mode: "insensitive" } },
+  });
 
   // Always return success to avoid email enumeration
   if (!user) {

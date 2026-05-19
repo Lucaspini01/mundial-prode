@@ -3,11 +3,13 @@ import { prisma } from "@/lib/db";
 import bcrypt from "bcryptjs";
 
 export async function POST(req: NextRequest) {
-  const { email, username, password, favoriteTeamId, invitedBy } = await req.json();
+  const { email: rawEmail, username, password, favoriteTeamId, invitedBy } = await req.json();
 
-  if (!email || !username || !password) {
+  if (!rawEmail || !username || !password) {
     return NextResponse.json({ error: "Faltan datos." }, { status: 400 });
   }
+
+  const email = String(rawEmail).trim().toLowerCase();
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) {
@@ -28,7 +30,9 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const existingEmail = await prisma.user.findUnique({ where: { email } });
+  const existingEmail = await prisma.user.findFirst({
+    where: { email: { equals: email, mode: "insensitive" } },
+  });
   if (existingEmail) {
     return NextResponse.json(
       { error: "Ese email ya está registrado." },
