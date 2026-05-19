@@ -1,0 +1,124 @@
+{
+  "name": "Recordatorio Pago Prode - 9 Junio",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 10 9 6 *"
+            }
+          ]
+        }
+      },
+      "id": "a1b2c3d4-0001-0000-0000-000000000001",
+      "name": "Schedule Trigger - 9 Jun 10am",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT u.email, u.username\nFROM \"User\" u\nWHERE u.\"hasPaid\" = false\n  AND u.\"isApproved\" = true\n  AND u.\"isAdmin\" = false\n  AND EXISTS (\n    SELECT 1 FROM \"Fecha\" f WHERE f.deadline > NOW()\n  );",
+        "options": {}
+      },
+      "id": "a1b2c3d4-0002-0000-0000-000000000002",
+      "name": "Get Unpaid Users",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-email-not-empty",
+              "leftValue": "={{ $json.email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-0003-0000-0000-000000000003",
+      "name": "Has Email",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "fromEmail": "REEMPLAZAR@gmail.com",
+        "toEmail": "={{ $json.email }}",
+        "subject": "=Recordatorio: cerrá tu inscripción al Prode del Mundial",
+        "emailFormat": "html",
+        "html": "=<p>Hola <strong>{{ $json.username }}</strong>,</p>\n<p>Te escribo porque todavía no registramos tu pago para el <strong>Prode Mundial 2026</strong>.</p>\n<p>El cierre de inscripciones es el <strong>11 de junio a las 15:00</strong> (hora del primer partido). Después de esa hora no vas a poder cargar predicciones para la Jornada 1.</p>\n<p>Para confirmar tu pago, contactanos por el canal habitual. Una vez registrado, te aparece el tilde verde \"PAGÓ ✓\" en tu panel.</p>\n<p>¡Gracias!<br/>Equipo Prode</p>",
+        "options": {}
+      },
+      "id": "a1b2c3d4-0004-0000-0000-000000000004",
+      "name": "Send Reminder Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [900, 300]
+    }
+  ],
+  "connections": {
+    "Schedule Trigger - 9 Jun 10am": {
+      "main": [
+        [
+          {
+            "node": "Get Unpaid Users",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Unpaid Users": {
+      "main": [
+        [
+          {
+            "node": "Has Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Email": {
+      "main": [
+        [
+          {
+            "node": "Send Reminder Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    }
+  },
+  "settings": {
+    "timezone": "America/Argentina/Buenos_Aires",
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "instanceId": "mundial-prode-recordatorio"
+  },
+  "tags": []
+}
