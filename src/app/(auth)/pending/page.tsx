@@ -35,9 +35,9 @@ export default function PendingPage() {
             Aprobación requerida
           </p>
           <p className="text-slate-400 text-sm leading-relaxed mb-6">
-            Tu cuenta fue creada correctamente. Un administrador la revisará y
-            habilitará tu acceso en breve, una vez confirmado el pago de la
-            entrada al prode.
+            Tu cuenta fue creada correctamente. Compartile tu comprobante de
+            pago a la persona que te invitó. Una vez confirmado el pago de la
+            entrada se habilitará tu cuenta.
           </p>
 
           <div className="space-y-3">

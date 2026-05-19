@@ -64,7 +64,7 @@ export default function RegisterPage() {
             <h1 className="font-russo text-xl text-white tracking-tight mb-2">¡Cuenta creada!</h1>
             <p className="text-green-400 text-sm font-semibold mb-4">Registro exitoso</p>
             <p className="text-slate-400 text-sm leading-relaxed mb-6">
-              Tu cuenta fue registrada. Un administrador revisará tu solicitud y habilitará tu acceso una vez confirmado el pago de la entrada al prode.
+              Tu cuenta fue creada correctamente. Compartile tu comprobante de pago a la persona que te invitó. Una vez confirmado el pago de la entrada se habilitará tu cuenta.
             </p>
             <Link href="/login" className="btn-primary block w-full py-2.5 text-sm text-center">
               Ir al inicio de sesión
