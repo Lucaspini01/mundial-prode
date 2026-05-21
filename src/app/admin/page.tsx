@@ -55,10 +55,7 @@ export default async function AdminDashboard() {
                 Fecha {activeFecha.number} · {activeFecha.season}
               </p>
               <p className="text-sm text-gray-500">
-                {activeFecha.matches.length} partidos ·{" "}
-                {activeFecha.deadline
-                  ? `Cierra ${new Date(activeFecha.deadline).toLocaleString("es-AR", { timeZone: "America/Buenos_Aires", hour12: false })}`
-                  : "Sin deadline"}
+                {activeFecha.matches.length} partidos
               </p>
             </div>
             <div className="flex gap-2">

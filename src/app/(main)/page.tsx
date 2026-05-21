@@ -37,11 +37,12 @@ export default async function HomePage({
       },
     });
 
-    // Default to first jornada whose deadline hasn't passed, else jornada 1
+    // Default to first jornada with at least one match not yet started, else jornada 1
     const jornadaNumber = jornadaParam ? parseInt(jornadaParam) : null;
+    const now = new Date();
     const fecha =
       gruposFechas.find((f) => f.number === jornadaNumber) ??
-      gruposFechas.find((f) => !f.deadline || new Date(f.deadline) > new Date()) ??
+      gruposFechas.find((f) => f.matches.some((m) => !m.scheduledAt || m.scheduledAt > now)) ??
       gruposFechas[0];
 
     const predictions = session && fecha
@@ -50,7 +51,14 @@ export default async function HomePage({
         })
       : [];
 
-    const deadlinePassed = fecha?.deadline && new Date(fecha.deadline) < new Date();
+    const fechaMatches = fecha?.matches ?? [];
+    const futureMatches = fechaMatches.filter((m) => m.scheduledAt && m.scheduledAt > now);
+    const nextDeadline = futureMatches
+      .map((m) => m.scheduledAt as Date)
+      .sort((a, b) => a.getTime() - b.getTime())[0];
+    const allClosed =
+      fechaMatches.length > 0 &&
+      fechaMatches.every((m) => m.scheduledAt && m.scheduledAt <= now);
 
     return (
       <div>
@@ -87,7 +95,9 @@ export default async function HomePage({
             <div className="flex gap-2 mb-6">
               {gruposFechas.map((f) => {
                 const isSelected = fecha?.id === f.id;
-                const isPast = f.deadline && new Date(f.deadline) < new Date();
+                const isPast =
+                  f.matches.length > 0 &&
+                  f.matches.every((m) => m.scheduledAt && m.scheduledAt <= now);
                 return (
                   <Link
                     key={f.id}
@@ -121,19 +131,15 @@ export default async function HomePage({
                       {fecha.matches.length} partido{fecha.matches.length !== 1 ? "s" : ""}
                     </p>
                   </div>
-                  {fecha.deadline && (
-                    <span
-                      className={`text-sm font-semibold px-3 py-1.5 rounded-xl border ${
-                        deadlinePassed
-                          ? "bg-red-500/10 text-red-400 border-red-500/20"
-                          : "bg-amber-500/10 text-amber-400 border-amber-500/20"
-                      }`}
-                    >
-                      {deadlinePassed
-                        ? "⏰ Predicciones cerradas"
-                        : `⏳ Cierra: ${new Date(fecha.deadline).toLocaleString("es-AR", { timeZone: "America/Buenos_Aires", hour12: false })}`}
+                  {allClosed ? (
+                    <span className="text-sm font-semibold px-3 py-1.5 rounded-xl border bg-red-500/10 text-red-400 border-red-500/20">
+                      ⏰ Predicciones cerradas
                     </span>
-                  )}
+                  ) : nextDeadline ? (
+                    <span className="text-sm font-semibold px-3 py-1.5 rounded-xl border bg-amber-500/10 text-amber-400 border-amber-500/20">
+                      ⏳ Próximo cierre: {nextDeadline.toLocaleString("es-AR", { timeZone: "America/Buenos_Aires", hour12: false })}
+                    </span>
+                  ) : null}
                 </div>
 
                 {fecha.matches.length === 0 ? (
@@ -157,7 +163,6 @@ export default async function HomePage({
                       homeGoals: p.homeGoals,
                       awayGoals: p.awayGoals,
                     }))}
-                    deadlinePassed={!!deadlinePassed}
                     fechaId={fecha.id}
                   />
                 )}
@@ -192,7 +197,15 @@ export default async function HomePage({
       })
     : [];
 
-  const deadlinePassed = fecha?.deadline && new Date(fecha.deadline) < new Date();
+  const now = new Date();
+  const fechaMatches = fecha?.matches ?? [];
+  const futureMatches = fechaMatches.filter((m) => m.scheduledAt && m.scheduledAt > now);
+  const nextDeadline = futureMatches
+    .map((m) => m.scheduledAt as Date)
+    .sort((a, b) => a.getTime() - b.getTime())[0];
+  const allClosed =
+    fechaMatches.length > 0 &&
+    fechaMatches.every((m) => m.scheduledAt && m.scheduledAt <= now);
 
   return (
     <div>
@@ -244,19 +257,15 @@ export default async function HomePage({
                 {fecha.matches.length} partido{fecha.matches.length !== 1 ? "s" : ""}
               </p>
             </div>
-            {fecha.deadline && (
-              <span
-                className={`text-sm font-semibold px-3 py-1.5 rounded-xl border ${
-                  deadlinePassed
-                    ? "bg-red-500/10 text-red-400 border-red-500/20"
-                    : "bg-amber-500/10 text-amber-400 border-amber-500/20"
-                }`}
-              >
-                {deadlinePassed
-                  ? "⏰ Predicciones cerradas"
-                  : `⏳ Cierra: ${new Date(fecha.deadline).toLocaleString("es-AR", { timeZone: "America/Buenos_Aires", hour12: false })}`}
+            {allClosed ? (
+              <span className="text-sm font-semibold px-3 py-1.5 rounded-xl border bg-red-500/10 text-red-400 border-red-500/20">
+                ⏰ Predicciones cerradas
               </span>
-            )}
+            ) : nextDeadline ? (
+              <span className="text-sm font-semibold px-3 py-1.5 rounded-xl border bg-amber-500/10 text-amber-400 border-amber-500/20">
+                ⏳ Próximo cierre: {nextDeadline.toLocaleString("es-AR", { timeZone: "America/Buenos_Aires", hour12: false })}
+              </span>
+            ) : null}
           </div>
 
           {fecha.matches.length === 0 ? (
@@ -280,7 +289,6 @@ export default async function HomePage({
                 homeGoals: p.homeGoals,
                 awayGoals: p.awayGoals,
               }))}
-              deadlinePassed={!!deadlinePassed}
               fechaId={fecha.id}
             />
           )}

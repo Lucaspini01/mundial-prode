@@ -2,23 +2,6 @@
 
 import { useState, useEffect } from "react";
 
-function toUTC(date: string, time: string): string {
-  const [year, month, day] = date.split("-").map(Number);
-  const [hours, minutes] = time.split(":").map(Number);
-  return new Date(Date.UTC(year, month - 1, day, hours + 3, minutes)).toISOString();
-}
-
-function toAR(utc: string): string {
-  return new Date(utc).toLocaleString("es-AR", { timeZone: "America/Buenos_Aires", hour12: false });
-}
-
-function utcToARInputs(utc: string): { date: string; time: string } {
-  const d = new Date(new Date(utc).getTime() - 3 * 60 * 60 * 1000);
-  const date = d.toISOString().slice(0, 10);
-  const time = d.toISOString().slice(11, 16);
-  return { date, time };
-}
-
 const PHASES = ["GRUPOS", "DIECISEISAVOS", "OCTAVOS", "CUARTOS", "SEMIFINAL", "TERCER_PUESTO", "FINAL"] as const;
 type PhaseKey = (typeof PHASES)[number];
 
@@ -38,7 +21,6 @@ type Fecha = {
   season: number;
   phase: PhaseKey;
   isActive: boolean;
-  deadline: string | null;
   _count: { matches: number };
 };
 
@@ -48,8 +30,6 @@ export default function FechasPage() {
     number: "",
     season: "2026",
     phase: "GRUPOS" as PhaseKey,
-    deadlineDate: "",
-    deadlineTime: "",
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -59,8 +39,6 @@ export default function FechasPage() {
     number: "",
     season: "",
     phase: "GRUPOS" as PhaseKey,
-    deadlineDate: "",
-    deadlineTime: "",
   });
   const [editLoading, setEditLoading] = useState(false);
   const [editError, setEditError] = useState("");
@@ -85,9 +63,6 @@ export default function FechasPage() {
         number: parseInt(form.number),
         season: parseInt(form.season),
         phase: form.phase,
-        deadline: form.deadlineDate
-          ? toUTC(form.deadlineDate, form.deadlineTime || "23:59")
-          : null,
       }),
     });
 
@@ -97,20 +72,17 @@ export default function FechasPage() {
       const d = await res.json();
       setError(d.error || "Error al crear fecha.");
     } else {
-      setForm({ number: "", season: "2026", phase: "GRUPOS", deadlineDate: "", deadlineTime: "" });
+      setForm({ number: "", season: "2026", phase: "GRUPOS" });
       load();
     }
   }
 
   function openEdit(f: Fecha) {
-    const dl = f.deadline ? utcToARInputs(f.deadline) : { date: "", time: "" };
     setEditingId(f.id);
     setEditForm({
       number: String(f.number),
       season: String(f.season),
       phase: f.phase,
-      deadlineDate: dl.date,
-      deadlineTime: dl.time,
     });
     setEditError("");
   }
@@ -126,9 +98,6 @@ export default function FechasPage() {
         number: parseInt(editForm.number),
         season: parseInt(editForm.season),
         phase: editForm.phase,
-        deadline: editForm.deadlineDate
-          ? toUTC(editForm.deadlineDate, editForm.deadlineTime || "23:59")
-          : null,
       }),
     });
 
@@ -210,29 +179,6 @@ export default function FechasPage() {
               </select>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Fecha de cierre (opcional)
-              </label>
-              <input
-                className="input"
-                type="date"
-                value={form.deadlineDate}
-                onChange={(e) => setForm({ ...form, deadlineDate: e.target.value })}
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Hora de cierre <span className="text-gray-400">(por defecto 23:59)</span>
-              </label>
-              <input
-                className="input"
-                type="time"
-                value={form.deadlineTime}
-                onChange={(e) => setForm({ ...form, deadlineTime: e.target.value })}
-              />
-            </div>
-
             {error && <p className="text-red-600 text-sm bg-red-50 p-2 rounded">{error}</p>}
             <button type="submit" disabled={loading} className="btn-primary w-full">
               {loading ? "Creando..." : "Crear fecha"}
@@ -270,8 +216,7 @@ export default function FechasPage() {
                             )}
                           </p>
                           <p className="text-xs text-gray-500">
-                            {f._count.matches} partidos ·{" "}
-                            {f.deadline ? `Cierra ${toAR(f.deadline)}` : "Sin deadline"}
+                            {f._count.matches} partidos
                           </p>
                         </div>
                         <div className="flex gap-1.5 flex-wrap justify-end">
@@ -345,26 +290,6 @@ export default function FechasPage() {
                                 <option key={p} value={p}>{PHASE_LABELS[p]}</option>
                               ))}
                             </select>
-                          </div>
-                          <div className="grid grid-cols-2 gap-2">
-                            <div>
-                              <label className="text-xs text-gray-500 mb-0.5 block">Fecha cierre</label>
-                              <input
-                                className="input text-sm py-1"
-                                type="date"
-                                value={editForm.deadlineDate}
-                                onChange={(e) => setEditForm({ ...editForm, deadlineDate: e.target.value })}
-                              />
-                            </div>
-                            <div>
-                              <label className="text-xs text-gray-500 mb-0.5 block">Hora cierre</label>
-                              <input
-                                className="input text-sm py-1"
-                                type="time"
-                                value={editForm.deadlineTime}
-                                onChange={(e) => setEditForm({ ...editForm, deadlineTime: e.target.value })}
-                              />
-                            </div>
                           </div>
                           {editError && <p className="text-red-600 text-xs">{editError}</p>}
                           <div className="flex gap-2">

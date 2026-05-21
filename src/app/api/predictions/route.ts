@@ -42,11 +42,10 @@ export async function POST(req: NextRequest) {
 
     const match = await prisma.match.findUnique({
       where: { id: matchId },
-      include: { fecha: true },
     });
 
     if (!match || match.isFinished) continue;
-    if (match.fecha.deadline && new Date(match.fecha.deadline) < new Date()) continue;
+    if (match.scheduledAt && new Date(match.scheduledAt) < new Date()) continue;
 
     await prisma.prediction.upsert({
       where: { userId_matchId: { userId, matchId } },

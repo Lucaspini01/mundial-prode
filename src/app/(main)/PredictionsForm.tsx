@@ -18,11 +18,16 @@ type Match = {
 type Props = {
   matches: Match[];
   initialPredictions: PredictionInput[];
-  deadlinePassed: boolean;
   fechaId: number;
 };
 
-export default function PredictionsForm({ matches, initialPredictions, deadlinePassed, fechaId }: Props) {
+function isMatchLocked(match: Match): boolean {
+  if (match.isFinished) return true;
+  if (match.scheduledAt && new Date(match.scheduledAt) <= new Date()) return true;
+  return false;
+}
+
+export default function PredictionsForm({ matches, initialPredictions, fechaId }: Props) {
   const [predictions, setPredictions] = useState<PredictionInput[]>(initialPredictions);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -46,7 +51,7 @@ export default function PredictionsForm({ matches, initialPredictions, deadlineP
     setError("");
     setSaved(false);
 
-    const openMatches = matches.filter((m) => !m.isFinished);
+    const openMatches = matches.filter((m) => !isMatchLocked(m));
     const toSave = predictions.filter((p) => openMatches.some((m) => m.id === p.matchId));
 
     const res = await fetch("/api/predictions", {
@@ -64,17 +69,18 @@ export default function PredictionsForm({ matches, initialPredictions, deadlineP
     }
   }
 
-  const openMatches = matches.filter((m) => !m.isFinished);
+  const openMatches = matches.filter((m) => !isMatchLocked(m));
   const predictedCount = openMatches.filter((m) =>
     predictions.some((p) => p.matchId === m.id && p.homeGoals !== null && p.awayGoals !== null)
   ).length;
   const allPredicted = predictedCount === openMatches.length && openMatches.length > 0;
   const progress = openMatches.length > 0 ? (predictedCount / openMatches.length) * 100 : 0;
+  const hasOpen = openMatches.length > 0;
 
   return (
     <div>
       {/* Progress bar */}
-      {!deadlinePassed && openMatches.length > 0 && (
+      {hasOpen && (
         <div className="mb-6 card py-3 px-4">
           <div className="flex items-center justify-between mb-2">
             <span className={`text-sm font-semibold ${allPredicted ? "text-green-400" : "text-slate-300"}`}>
@@ -98,7 +104,7 @@ export default function PredictionsForm({ matches, initialPredictions, deadlineP
       {/* Match grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
         {matches.map((match) => {
-          const locked = deadlinePassed || match.isFinished;
+          const locked = isMatchLocked(match);
           const pred = predictions.find((p) => p.matchId === match.id);
           return (
             <MatchCard
@@ -113,7 +119,7 @@ export default function PredictionsForm({ matches, initialPredictions, deadlineP
       </div>
 
       {/* Save button */}
-      {!deadlinePassed && (
+      {hasOpen && (
         <div className="flex flex-col items-center gap-3 pb-4">
           {error && (
             <div className="flex items-center gap-2 text-red-400 text-sm bg-red-500/10 border border-red-500/20 px-4 py-2.5 rounded-xl">
