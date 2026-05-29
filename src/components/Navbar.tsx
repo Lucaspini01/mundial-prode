@@ -92,6 +92,14 @@ export default function Navbar({ username, favoriteTeamFlag, favoriteTeamShort, 
           />
 
           <button
+            onClick={() => window.dispatchEvent(new Event("open-install-tutorial"))}
+            className="hidden sm:inline-flex items-center gap-1 text-xs font-semibold text-slate-400 hover:text-green-400 transition-colors duration-150 cursor-pointer"
+            title="Agregar a inicio"
+          >
+            <span className="text-base leading-none">⬇</span> Instalar
+          </button>
+
+          <button
             onClick={() => signOut({ callbackUrl: "/login" })}
             className="text-sm text-slate-500 hover:text-white transition-colors duration-150 font-medium cursor-pointer"
           >
@@ -127,6 +135,14 @@ export default function Navbar({ username, favoriteTeamFlag, favoriteTeamShort, 
             Admin
           </Link>
         )}
+        <button
+          onClick={() => window.dispatchEvent(new Event("open-install-tutorial"))}
+          className="px-2 py-1.5 rounded-lg text-sm font-medium text-slate-500 hover:bg-white/[0.06] hover:text-green-400 transition-all duration-150"
+          title="Agregar a inicio"
+          aria-label="Agregar a inicio"
+        >
+          ⬇
+        </button>
       </div>
     </nav>
   );

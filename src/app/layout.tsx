@@ -12,6 +12,22 @@ const russoOne = Russo_One({
 export const metadata: Metadata = {
   title: "Prode Curupa Mundial 2026",
   description: "Predicciones del Mundial de Fútbol 2026",
+  manifest: "/manifest.json",
+  applicationName: "Prode Curupa",
+  appleWebApp: {
+    capable: true,
+    title: "Prode Curupa",
+    statusBarStyle: "black-translucent",
+  },
+  icons: {
+    icon: "/logo-app.png",
+    shortcut: "/logo-app.png",
+    apple: "/logo-app.png",
+  },
+};
+
+export const viewport: import("next").Viewport = {
+  themeColor: "#0b1220",
 };
 
 export default function RootLayout({

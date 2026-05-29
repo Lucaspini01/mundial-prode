@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Navbar from "@/components/Navbar";
+import InstallTutorial from "@/components/InstallTutorial";
 
 export default async function MainLayout({
   children,
@@ -28,6 +29,7 @@ export default async function MainLayout({
       <main className="flex-1 max-w-5xl mx-auto w-full px-4 py-6">
         {children}
       </main>
+      <InstallTutorial />
     </div>
   );
 }
