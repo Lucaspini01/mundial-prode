@@ -18,7 +18,15 @@ export type PredictionInput = {
   matchId: number;
   homeGoals: number | null;
   awayGoals: number | null;
+  points?: number | null;
 };
+
+function pointsColor(pts: number): string {
+  if (pts >= 10) return "text-green-400";
+  if (pts >= 7) return "text-teal-400";
+  if (pts >= 5) return "text-amber-400";
+  return "text-red-400";
+}
 
 type Props = {
   match: Match;
@@ -171,11 +179,24 @@ export default function MatchCard({ match, prediction, locked, onChange }: Props
         </div>
       </div>
 
-      {locked && (
-        <p className="text-[10px] text-center text-slate-600 italic">
-          {match.isFinished ? "Partido finalizado" : "Predicciones cerradas"}
-        </p>
-      )}
+      {match.isFinished ? (
+        isPredicted ? (
+          <div className="flex items-center justify-center gap-2 text-[11px]">
+            <span className="text-slate-400">
+              Pred: {homeGoals}–{awayGoals}
+            </span>
+            {prediction?.points !== null && prediction?.points !== undefined ? (
+              <span className={`font-bold ${pointsColor(prediction.points)}`}>
+                +{prediction.points}pts
+              </span>
+            ) : null}
+          </div>
+        ) : (
+          <p className="text-[10px] text-center text-slate-600 italic">Sin predicción</p>
+        )
+      ) : locked ? (
+        <p className="text-[10px] text-center text-slate-600 italic">Predicciones cerradas</p>
+      ) : null}
     </div>
   );
 }
