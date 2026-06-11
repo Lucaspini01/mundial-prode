@@ -31,12 +31,12 @@ export default async function AdminDashboard() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         {stats.map((s) => (
           <div key={s.label} className="card text-center">
-            <p className="text-3xl font-bold text-blue-700">{s.value}</p>
-            <p className="text-sm text-gray-500 mt-1">{s.label}</p>
+            <p className="text-3xl font-bold text-mundial-green">{s.value}</p>
+            <p className="text-sm text-slate-400 mt-1">{s.label}</p>
             {s.href && (
               <Link
                 href={s.href}
-                className="text-xs text-blue-600 hover:underline mt-2 inline-block"
+                className="text-xs text-green-400 hover:text-green-300 mt-2 inline-block"
               >
                 Administrar →
               </Link>
@@ -47,14 +47,14 @@ export default async function AdminDashboard() {
 
       {/* Fecha activa */}
       <div className="card">
-        <h2 className="font-semibold text-gray-700 mb-3">Fecha activa</h2>
+        <h2 className="font-semibold text-slate-200 mb-3">Fecha activa</h2>
         {activeFecha ? (
           <div className="flex items-center justify-between">
             <div>
-              <p className="font-bold text-lg">
+              <p className="font-bold text-lg text-slate-100">
                 Fecha {activeFecha.number} · {activeFecha.season}
               </p>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-slate-400">
                 {activeFecha.matches.length} partidos
               </p>
             </div>
@@ -69,7 +69,7 @@ export default async function AdminDashboard() {
           </div>
         ) : (
           <div className="flex items-center justify-between">
-            <p className="text-gray-400">No hay fecha activa.</p>
+            <p className="text-slate-500">No hay fecha activa.</p>
             <Link href="/admin/fechas" className="btn-primary text-sm">
               Crear fecha
             </Link>

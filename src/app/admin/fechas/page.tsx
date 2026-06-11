@@ -139,11 +139,11 @@ export default function FechasPage() {
       <div className="grid md:grid-cols-2 gap-6">
         {/* Crear fecha */}
         <div className="card">
-          <h2 className="font-semibold text-gray-700 mb-4">Nueva fecha</h2>
+          <h2 className="font-semibold text-slate-200 mb-4">Nueva fecha</h2>
           <form onSubmit={handleCreate} className="space-y-4">
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Número</label>
+                <label className="block text-sm font-medium text-slate-300 mb-1">Número</label>
                 <input
                   className="input"
                   type="number"
@@ -154,7 +154,7 @@ export default function FechasPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Temporada</label>
+                <label className="block text-sm font-medium text-slate-300 mb-1">Temporada</label>
                 <input
                   className="input"
                   type="number"
@@ -166,7 +166,7 @@ export default function FechasPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Fase</label>
+              <label className="block text-sm font-medium text-slate-300 mb-1">Fase</label>
               <select
                 className="input"
                 value={form.phase}
@@ -179,7 +179,7 @@ export default function FechasPage() {
               </select>
             </div>
 
-            {error && <p className="text-red-600 text-sm bg-red-50 p-2 rounded">{error}</p>}
+            {error && <p className="text-red-400 text-sm bg-red-500/10 border border-red-500/20 p-2 rounded">{error}</p>}
             <button type="submit" disabled={loading} className="btn-primary w-full">
               {loading ? "Creando..." : "Crear fecha"}
             </button>
@@ -188,14 +188,14 @@ export default function FechasPage() {
 
         {/* Lista de fechas agrupadas por fase */}
         <div className="card">
-          <h2 className="font-semibold text-gray-700 mb-4">Fechas ({fechas.length})</h2>
+          <h2 className="font-semibold text-slate-200 mb-4">Fechas ({fechas.length})</h2>
           {fechas.length === 0 && (
-            <p className="text-gray-400 text-sm">No hay fechas creadas.</p>
+            <p className="text-slate-500 text-sm">No hay fechas creadas.</p>
           )}
           <div className="space-y-4">
             {grouped.map(({ phase, items }) => (
               <div key={phase}>
-                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">
                   {PHASE_LABELS[phase]}
                 </p>
                 <div className="space-y-2">
@@ -203,11 +203,11 @@ export default function FechasPage() {
                     <div key={f.id}>
                       <div
                         className={`flex items-center justify-between p-3 rounded-lg border ${
-                          f.isActive ? "border-blue-500 bg-blue-50" : "border-gray-200"
+                          f.isActive ? "border-blue-500 bg-blue-500/10" : "border-white/10 bg-white/5"
                         }`}
                       >
                         <div>
-                          <p className="font-medium text-sm">
+                          <p className="font-medium text-sm text-slate-100">
                             Fecha {f.number} · {f.season}
                             {f.isActive && (
                               <span className="ml-2 text-xs bg-blue-600 text-white px-2 py-0.5 rounded-full">
@@ -215,7 +215,7 @@ export default function FechasPage() {
                               </span>
                             )}
                           </p>
-                          <p className="text-xs text-gray-500">
+                          <p className="text-xs text-slate-500">
                             {f._count.matches} partidos
                           </p>
                         </div>
@@ -224,8 +224,8 @@ export default function FechasPage() {
                             onClick={() => editingId === f.id ? setEditingId(null) : openEdit(f)}
                             className={`text-xs py-1 px-2.5 rounded-lg border transition-colors ${
                               editingId === f.id
-                                ? "border-yellow-400 bg-yellow-50 text-yellow-700"
-                                : "border-gray-300 text-gray-600 hover:bg-gray-100"
+                                ? "border-yellow-400/50 bg-yellow-400/15 text-yellow-400"
+                                : "border-white/20 text-slate-300 hover:bg-white/10"
                             }`}
                           >
                             Editar
@@ -247,7 +247,7 @@ export default function FechasPage() {
                           )}
                           <button
                             onClick={() => handleDelete(f.id, f.number, f.phase)}
-                            className="text-xs py-1 px-2.5 rounded-lg border border-red-300 text-red-600 hover:bg-red-50 transition-colors"
+                            className="text-xs py-1 px-2.5 rounded-lg border border-red-500/30 text-red-400 hover:bg-red-500/15 transition-colors"
                           >
                             Borrar
                           </button>
@@ -256,11 +256,11 @@ export default function FechasPage() {
 
                       {/* Panel de edición */}
                       {editingId === f.id && (
-                        <div className="mt-1 p-3 bg-yellow-50 border border-yellow-200 rounded-lg space-y-3">
-                          <p className="text-xs font-semibold text-yellow-700">Editar fecha</p>
+                        <div className="mt-1 p-3 bg-yellow-400/10 border border-yellow-400/20 rounded-lg space-y-3">
+                          <p className="text-xs font-semibold text-yellow-400">Editar fecha</p>
                           <div className="grid grid-cols-2 gap-2">
                             <div>
-                              <label className="text-xs text-gray-500 mb-0.5 block">Número</label>
+                              <label className="text-xs text-slate-400 mb-0.5 block">Número</label>
                               <input
                                 className="input text-sm py-1"
                                 type="number"
@@ -270,7 +270,7 @@ export default function FechasPage() {
                               />
                             </div>
                             <div>
-                              <label className="text-xs text-gray-500 mb-0.5 block">Temporada</label>
+                              <label className="text-xs text-slate-400 mb-0.5 block">Temporada</label>
                               <input
                                 className="input text-sm py-1"
                                 type="number"
@@ -280,7 +280,7 @@ export default function FechasPage() {
                             </div>
                           </div>
                           <div>
-                            <label className="text-xs text-gray-500 mb-0.5 block">Fase</label>
+                            <label className="text-xs text-slate-400 mb-0.5 block">Fase</label>
                             <select
                               className="input text-sm py-1"
                               value={editForm.phase}
@@ -291,7 +291,7 @@ export default function FechasPage() {
                               ))}
                             </select>
                           </div>
-                          {editError && <p className="text-red-600 text-xs">{editError}</p>}
+                          {editError && <p className="text-red-400 text-xs">{editError}</p>}
                           <div className="flex gap-2">
                             <button
                               onClick={() => handleEdit(f.id)}

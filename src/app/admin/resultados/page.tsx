@@ -106,7 +106,7 @@ export default function ResultadosPage() {
       </div>
 
       {selectedFecha && matches.length === 0 && (
-        <p className="text-gray-400">No hay partidos en esta fecha.</p>
+        <p className="text-slate-500">No hay partidos en esta fecha.</p>
       )}
 
       <div className="space-y-4">
@@ -118,7 +118,7 @@ export default function ResultadosPage() {
                 {match.homeTeam.name} <span className="text-gray-400">vs</span>{" "}
                 {match.awayTeam.name}
                 {match.isFinished && (
-                  <span className="ml-2 text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">
+                  <span className="ml-2 text-xs bg-blue-500/15 text-blue-400 px-2 py-0.5 rounded-full">
                     FINALIZADO
                   </span>
                 )}
@@ -186,8 +186,8 @@ export default function ResultadosPage() {
               <p
                 className={`text-xs mt-2 ${
                   messages[match.id].startsWith("✓")
-                    ? "text-green-600"
-                    : "text-red-600"
+                    ? "text-green-400"
+                    : "text-red-400"
                 }`}
               >
                 {messages[match.id]}

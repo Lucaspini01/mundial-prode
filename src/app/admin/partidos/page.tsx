@@ -145,10 +145,10 @@ export default function PartidosPage() {
       <div className="grid md:grid-cols-2 gap-6">
         {/* Formulario */}
         <div className="card">
-          <h2 className="font-semibold text-gray-700 mb-4">Agregar partido</h2>
+          <h2 className="font-semibold text-slate-200 mb-4">Agregar partido</h2>
           <form onSubmit={handleCreate} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Fecha</label>
+              <label className="block text-sm font-medium text-slate-300 mb-1">Fecha</label>
               <select
                 className="input"
                 value={form.fechaId}
@@ -170,7 +170,7 @@ export default function PartidosPage() {
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Local</label>
+                <label className="block text-sm font-medium text-slate-300 mb-1">Local</label>
                 <select
                   className="input"
                   value={form.homeTeamId}
@@ -184,7 +184,7 @@ export default function PartidosPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Visitante</label>
+                <label className="block text-sm font-medium text-slate-300 mb-1">Visitante</label>
                 <select
                   className="input"
                   value={form.awayTeamId}
@@ -200,7 +200,7 @@ export default function PartidosPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-slate-300 mb-1">
                 Fecha y hora (opcional)
               </label>
               <input
@@ -211,7 +211,7 @@ export default function PartidosPage() {
               />
             </div>
 
-            {error && <p className="text-red-600 text-sm bg-red-50 p-2 rounded">{error}</p>}
+            {error && <p className="text-red-400 text-sm bg-red-500/10 border border-red-500/20 p-2 rounded">{error}</p>}
 
             <button
               type="submit"
@@ -225,22 +225,22 @@ export default function PartidosPage() {
 
         {/* Lista de partidos */}
         <div className="card">
-          <h2 className="font-semibold text-gray-700 mb-4">
+          <h2 className="font-semibold text-slate-200 mb-4">
             Partidos {form.fechaId ? `(${matches.length})` : ""}
           </h2>
           {!form.fechaId ? (
-            <p className="text-gray-400 text-sm">Seleccioná una fecha para ver sus partidos.</p>
+            <p className="text-slate-500 text-sm">Seleccioná una fecha para ver sus partidos.</p>
           ) : matches.length === 0 ? (
-            <p className="text-gray-400 text-sm">No hay partidos para esta fecha.</p>
+            <p className="text-slate-500 text-sm">No hay partidos para esta fecha.</p>
           ) : (
             <div className="space-y-2">
               {matches.map((m) => (
                 <div key={m.id}>
                   {editingId === m.id ? (
-                    <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg space-y-2">
+                    <div className="p-3 bg-yellow-400/10 border border-yellow-400/20 rounded-lg space-y-2">
                       <div className="grid grid-cols-2 gap-2">
                         <div>
-                          <label className="text-xs text-gray-500 mb-0.5 block">Local</label>
+                          <label className="text-xs text-slate-400 mb-0.5 block">Local</label>
                           <select
                             className="input text-sm py-1"
                             value={editForm.homeTeamId}
@@ -252,7 +252,7 @@ export default function PartidosPage() {
                           </select>
                         </div>
                         <div>
-                          <label className="text-xs text-gray-500 mb-0.5 block">Visitante</label>
+                          <label className="text-xs text-slate-400 mb-0.5 block">Visitante</label>
                           <select
                             className="input text-sm py-1"
                             value={editForm.awayTeamId}
@@ -265,7 +265,7 @@ export default function PartidosPage() {
                         </div>
                       </div>
                       <div>
-                        <label className="text-xs text-gray-500 mb-0.5 block">Fecha y hora</label>
+                        <label className="text-xs text-slate-400 mb-0.5 block">Fecha y hora</label>
                         <input
                           className="input text-sm py-1"
                           type="datetime-local"
@@ -273,7 +273,7 @@ export default function PartidosPage() {
                           onChange={(e) => setEditForm({ ...editForm, scheduledAt: e.target.value })}
                         />
                       </div>
-                      {editError && <p className="text-red-600 text-xs">{editError}</p>}
+                      {editError && <p className="text-red-400 text-xs">{editError}</p>}
                       <div className="flex gap-2">
                         <button
                           onClick={() => handleEdit(m.id)}
@@ -291,13 +291,13 @@ export default function PartidosPage() {
                       </div>
                     </div>
                   ) : (
-                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div className="flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-lg">
                       <div>
-                        <span className="text-sm font-medium">
+                        <span className="text-sm font-medium text-slate-100">
                           {m.homeTeam.shortName} vs {m.awayTeam.shortName}
                         </span>
                         {m.scheduledAt && (
-                          <span className="ml-2 text-xs text-gray-500">
+                          <span className="ml-2 text-xs text-slate-500">
                             {new Date(m.scheduledAt).toLocaleString("es-AR", {
                               day: "2-digit",
                               month: "2-digit",
@@ -307,19 +307,19 @@ export default function PartidosPage() {
                           </span>
                         )}
                         {m.isFinished && (
-                          <span className="ml-2 text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full">FIN</span>
+                          <span className="ml-2 text-xs bg-white/10 text-slate-400 px-2 py-0.5 rounded-full">FIN</span>
                         )}
                       </div>
                       <div className="flex gap-1.5">
                         <button
                           onClick={() => openEdit(m)}
-                          className="text-xs py-1 px-2.5 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 transition-colors"
+                          className="text-xs py-1 px-2.5 rounded-lg border border-white/20 text-slate-300 hover:bg-white/10 transition-colors"
                         >
                           Editar
                         </button>
                         <button
                           onClick={() => handleDelete(m.id, `${m.homeTeam.shortName} vs ${m.awayTeam.shortName}`)}
-                          className="text-xs py-1 px-2.5 rounded-lg border border-red-300 text-red-600 hover:bg-red-50 transition-colors"
+                          className="text-xs py-1 px-2.5 rounded-lg border border-red-500/30 text-red-400 hover:bg-red-500/15 transition-colors"
                         >
                           Borrar
                         </button>
