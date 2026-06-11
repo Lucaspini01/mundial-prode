@@ -88,7 +88,7 @@ export default function ResultadosPage() {
       <h1 className="text-2xl font-bold mb-6">Resultados</h1>
 
       <div className="card mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-slate-200 mb-2">
           Seleccionar fecha
         </label>
         <select
@@ -114,7 +114,7 @@ export default function ResultadosPage() {
           <div key={match.id} className="card">
             <div className="flex items-center justify-between flex-wrap gap-4">
               {/* Partido */}
-              <div className="font-semibold text-gray-800 min-w-0">
+              <div className="font-semibold text-slate-100 min-w-0">
                 {match.homeTeam.name} <span className="text-gray-400">vs</span>{" "}
                 {match.awayTeam.name}
                 {match.isFinished && (
@@ -127,7 +127,7 @@ export default function ResultadosPage() {
               {/* Score inputs */}
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-2">
-                  <label className="text-xs text-gray-500 font-medium">
+                  <label className="text-xs text-slate-400 font-medium">
                     {match.homeTeam.shortName}
                   </label>
                   <input
@@ -163,7 +163,7 @@ export default function ResultadosPage() {
                       }))
                     }
                   />
-                  <label className="text-xs text-gray-500 font-medium">
+                  <label className="text-xs text-slate-400 font-medium">
                     {match.awayTeam.shortName}
                   </label>
                 </div>
