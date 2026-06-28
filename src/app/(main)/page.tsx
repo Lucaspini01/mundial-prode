@@ -22,7 +22,18 @@ export default async function HomePage({
 }) {
   const session = await auth();
   const { phase: phaseParam, jornada: jornadaParam } = await searchParams;
-  const phase: Phase = PHASES.includes(phaseParam as Phase) ? (phaseParam as Phase) : "GRUPOS";
+
+  // Default phase = most advanced phase with an active fecha, else GRUPOS.
+  // So once el admin activa una fecha de knockout, los usuarios la ven al entrar.
+  const activeFechasForDefault = await prisma.fecha.findMany({
+    where: { isActive: true, season: 2026 },
+    select: { phase: true },
+  });
+  const activePhaseSet = new Set(activeFechasForDefault.map((f) => f.phase));
+  const defaultPhase: Phase =
+    [...PHASES].reverse().find((p) => activePhaseSet.has(p)) ?? "GRUPOS";
+
+  const phase: Phase = PHASES.includes(phaseParam as Phase) ? (phaseParam as Phase) : defaultPhase;
 
   // For GRUPOS: show all 3 jornadas as tabs, no isActive filter
   if (phase === "GRUPOS") {
@@ -176,11 +187,7 @@ export default async function HomePage({
   }
 
   // Non-GRUPOS phases: existing behavior (show active fecha)
-  const activeFechas = await prisma.fecha.findMany({
-    where: { isActive: true },
-    select: { phase: true },
-  });
-  const activePhases = new Set(activeFechas.map((f) => f.phase));
+  const activePhases = activePhaseSet;
 
   const fecha = await prisma.fecha.findFirst({
     where: { isActive: true, phase },
