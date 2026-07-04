@@ -296,6 +296,7 @@ export default async function HomePage({
                 matchId: p.matchId,
                 homeGoals: p.homeGoals,
                 awayGoals: p.awayGoals,
+                points: p.points,
               }))}
               fechaId={fecha.id}
             />
