@@ -13,6 +13,7 @@
     "db:seed-fixtures": "ts-node --project tsconfig.seed.json scripts/seed-fixtures.ts",
     "db:seed-16avos": "ts-node --project tsconfig.seed.json scripts/seed-fixtures-16avos.ts",
     "db:seed-octavos": "ts-node --project tsconfig.seed.json scripts/seed-fixtures-octavos.ts",
+    "db:seed-cuartos": "ts-node --project tsconfig.seed.json scripts/seed-fixtures-cuartos.ts",
     "db:studio": "prisma studio",
     "test:prode": "ts-node --project tsconfig.seed.json scripts/test-prode.ts"
   },
