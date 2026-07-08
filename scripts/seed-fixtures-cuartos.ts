@@ -35,7 +35,7 @@ interface Partido {
 const PARTIDOS: Partido[] = [
   { local: "Francia",   visitante: "Marruecos",  utc: "2026-07-09T20:00:00Z" },
   { local: "España",    visitante: "Bélgica",    utc: "2026-07-10T19:00:00Z" },
-  { local: "Noruega",   visitante: "Inglaterra", utc: "2026-07-11T17:00:00Z" },
+  { local: "Noruega",   visitante: "Inglaterra", utc: "2026-07-11T21:00:00Z" },
   { local: "Argentina", visitante: "Suiza",      utc: "2026-07-12T01:00:00Z" },
 ];
 
